@@ -4,16 +4,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import NoteCard from '../components/NoteCard.astro';
 import { projects } from '../lib/projects';
-import { href, newestFirst } from '../lib/site';
+import { categories, categorySlug, href, newestFirst } from '../lib/site';
 
-const recentNotes = (await getCollection('notes')).sort(newestFirst).slice(0, 3);
+const notes = (await getCollection('notes')).sort(newestFirst);
+const recentNotes = notes.slice(0, 3);
 ---
 <BaseLayout>
   <div class="shell home">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
         <p class="eyebrow"><span class="status-dot"></span> Jessica Yang / portfolio & notes</p>
-        <h1 id="hero-title">Building systems.<br /><em>Keeping notes.</em></h1>
+        <h1 id="hero-title">Hi, welcome.</h1>
         <p class="hero-intro">I’m Jessica, an MS Computer Science student at UC San Diego. I work across AI agents, LLM systems, software engineering, graphics, and computer vision.</p>
         <div class="hero-actions">
           <a class="button button-primary" href={href('projects/')}>View projects <span aria-hidden="true">↗</span></a>
@@ -32,6 +33,11 @@ const recentNotes = (await getCollection('notes')).sort(newestFirst).slice(0, 3)
         </ul>
         <div class="index-foot"><span>San Diego, CA</span><span>↗</span></div>
       </div>
+    </section>
+
+    <section class="section-block home-categories" aria-labelledby="browse-title">
+      <div class="section-heading"><div><p class="eyebrow">Explore the notebook</p><h2 id="browse-title">Browse by subject</h2></div><a class="text-link" href={href('notes/')}>All notes <span aria-hidden="true">↗</span></a></div>
+      <div class="category-grid">{categories.map((category) => <a class="category-card" href={href(`notes/category/${categorySlug(category)}/`)}><span>{category}</span><small>{notes.filter((note) => note.data.category === category).length} notes</small><b aria-hidden="true">↗</b></a>)}</div>
     </section>
 
     <section class="section-block" aria-labelledby="projects-title">
