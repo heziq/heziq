@@ -1,6 +1,12 @@
-# Jessica Yang — portfolio and notes
+# Portfolio and notes
 
 A static Astro portfolio with a Markdown technical notebook. No backend or CMS.
+
+## View the site
+
+Once the [deployment workflow](https://github.com/heziq/heziq/actions/workflows/deploy.yml) finishes, open [the website](https://heziq.github.io/heziq/).
+
+To view it locally now, run `npm install` and `npm run dev`, then open the local URL printed by Astro. The project base path is `/heziq/`, so the URL will normally end in `/heziq/`.
 
 ## Local development
 
@@ -33,7 +39,7 @@ Valid categories are `Algorithms`, `Systems`, `AI / Agents`, `Research`, and `Gr
 
 ## GitHub Pages
 
-The workflow in `.github/workflows/deploy.yml` builds and deploys on every push to `main`. In repository **Settings → Pages**, set **Build and deployment → Source** to **GitHub Actions** once.
+The workflow in `.github/workflows/deploy.yml` builds and deploys on every push to `main`. GitHub Pages is configured to use GitHub Actions as its source.
 
 `astro.config.mjs` reads `GITHUB_REPOSITORY` during Actions builds. In `heziq/heziq`, the site uses `https://heziq.github.io/heziq/`. If the repository is renamed to `heziq.github.io`, it automatically uses `/` as the base path. For a different owner or repository, the same variables provide the matching site URL and base path.
 
