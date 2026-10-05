@@ -1,0 +1,11 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, noteHref, href, tagSlug } from '../lib/site';
+const { note } = Astro.props as { note: CollectionEntry<'notes'> };
+---
+<article class="note-card">
+  <div class="note-card-top"><span>{note.data.category}</span><time datetime={note.data.date.toISOString()}>{formatDate(note.data.date)}</time></div>
+  <h3><a href={noteHref(note)}>{note.data.title}</a></h3>
+  <p>{note.data.description}</p>
+  <div class="note-card-bottom"><div class="note-tags">{note.data.tags.map((tag) => <a href={href(`notes/tag/${tagSlug(tag)}/`)}>#{tag}</a>)}</div><span aria-hidden="true">↗</span></div>
+</article>

@@ -1,0 +1,15 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import NoteCard from '../../../components/NoteCard.astro';
+import { categories, categorySlug, href, newestFirst } from '../../../lib/site';
+
+export function getStaticPaths() {
+  return categories.map((category) => ({ params: { category: categorySlug(category) }, props: { category } }));
+}
+const { category } = Astro.props as { category: typeof categories[number] };
+const notes = (await getCollection('notes')).filter((note) => note.data.category === category).sort(newestFirst);
+---
+<BaseLayout title={`${category} notes`} description={`Technical notes on ${category} by Jessica Yang.`}>
+  <div class="shell page"><div class="note-breadcrumb"><a href={href('notes/')}>Notes</a><span>/</span><span>{category}</span></div><header class="page-heading compact-heading"><p class="eyebrow">Subject / {notes.length} notes</p><h1>{category}</h1></header>{notes.length ? <div class="note-grid">{notes.map((note) => <NoteCard note={note} />)}</div> : <div class="quiet-panel">Notes in this subject are coming soon. <a href={href('notes/')}>Browse all notes ↗</a></div>}</div>
+</BaseLayout>

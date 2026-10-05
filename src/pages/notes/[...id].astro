@@ -1,0 +1,29 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NotesSidebar from '../../components/NotesSidebar.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import { formatDate, href, newestFirst } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('notes');
+  return notes.map((note) => ({ params: { id: note.id }, props: { note, notes } }));
+}
+
+const { note, notes } = Astro.props as { note: CollectionEntry<'notes'>; notes: CollectionEntry<'notes'>[] };
+const { Content, headings } = await render(note);
+---
+<BaseLayout title={note.data.title} description={note.data.description} type="article">
+  <div class="shell note-page">
+    <div class="note-breadcrumb"><a href={href('notes/')}>Notes</a><span>/</span><span>{note.data.category}</span></div>
+    <div class="note-layout">
+      <NotesSidebar notes={notes.sort(newestFirst)} currentId={note.id} />
+      <article class="note-article">
+        <header class="note-header"><p class="eyebrow">{note.data.category} / field note</p><h1>{note.data.title}</h1><p class="note-description">{note.data.description}</p><div class="note-meta"><time datetime={note.data.date.toISOString()}>{formatDate(note.data.date)}</time><span aria-hidden="true">·</span><span>{note.data.tags.map((tag) => `#${tag}`).join('  ')}</span></div></header>
+        <div class="prose"><Content /></div>
+        <div class="article-end"><a class="text-link" href={href('notes/')}>← All notes</a></div>
+      </article>
+      <TableOfContents headings={headings} />
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,15 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NoteCard from '../../components/NoteCard.astro';
+import { categories, categorySlug, href, newestFirst } from '../../lib/site';
+
+const notes = (await getCollection('notes')).sort(newestFirst);
+---
+<BaseLayout title="Notes" description="Technical notes by Jessica Yang on algorithms, systems, AI agents, research, and graphics.">
+  <div class="shell page">
+    <header class="page-heading"><p class="eyebrow">Technical notebook / growing collection</p><h1>Notes</h1><p>Working notes, useful patterns, and things worth remembering. Browse by subject or start with the latest entries.</p></header>
+    <section class="category-section" aria-labelledby="browse-title"><div class="section-heading"><div><p class="eyebrow">Explore the archive</p><h2 id="browse-title">Browse by subject</h2></div></div><div class="category-grid">{categories.map((category) => <a class="category-card" href={href(`notes/category/${categorySlug(category)}/`)}><span>{category}</span><small>{notes.filter((note) => note.data.category === category).length} notes</small><b aria-hidden="true">↗</b></a>)}</div></section>
+    <section class="section-block" aria-labelledby="all-notes-title"><div class="section-heading"><div><p class="eyebrow">Latest first</p><h2 id="all-notes-title">All notes</h2></div><span class="count-label">{notes.length} entries</span></div><div class="note-grid">{notes.map((note) => <NoteCard note={note} />)}</div></section>
+  </div>
+</BaseLayout>

@@ -1,0 +1,9 @@
+---
+import type { MarkdownHeading } from 'astro';
+const { headings } = Astro.props as { headings: MarkdownHeading[] };
+const visible = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+---
+{visible.length > 0 && <aside class="toc" aria-label="On this page">
+  <div class="sidebar-heading">On this page</div>
+  <ul>{visible.map((heading) => <li class:list={['toc-item', { nested: heading.depth === 3 }]}><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ul>
+</aside>}

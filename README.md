@@ -1,16 +1,40 @@
-## Hi there 👋
+# Jessica Yang — portfolio and notes
 
-<!--
-**heziq/heziq** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+A static Astro portfolio with a Markdown technical notebook. No backend or CMS.
 
-Here are some ideas to get you started:
+## Local development
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+```sh
+npm install
+npm run dev
+npm run check
+npm run build
+```
+
+## Add a note
+
+Create `src/content/notes/<subject>/<slug>.md` with frontmatter like:
+
+```md
+---
+title: "My new note"
+date: 2026-10-05
+category: "Algorithms"
+tags: [graph, leetcode]
+description: "One sentence about the note."
+---
+
+## First heading
+
+Write in Markdown.
+```
+
+Valid categories are `Algorithms`, `Systems`, `AI / Agents`, `Research`, and `Graphics / CV`. The site builds note pages, category lists, tag pages, recent notes, and article navigation automatically. Dates determine ordering. Push the note to `main` to trigger deployment.
+
+## GitHub Pages
+
+The workflow in `.github/workflows/deploy.yml` builds and deploys on every push to `main`. In repository **Settings → Pages**, set **Build and deployment → Source** to **GitHub Actions** once.
+
+`astro.config.mjs` reads `GITHUB_REPOSITORY` during Actions builds. In `heziq/heziq`, the site uses `https://heziq.github.io/heziq/`. If the repository is renamed to `heziq.github.io`, it automatically uses `/` as the base path. For a different owner or repository, the same variables provide the matching site URL and base path.
+
+Project summaries and links live in `src/lib/projects.ts`. The resume page is a placeholder until a PDF or HTML resume is ready.

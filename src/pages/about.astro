@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { href } from '../lib/site';
+---
+<BaseLayout title="About" description="About Jessica Yang, an MS Computer Science student at UC San Diego.">
+  <div class="shell page narrow-page">
+    <header class="page-heading"><p class="eyebrow">About / Jessica Yang</p><h1>Curious about the systems behind the experience.</h1><p>I’m pursuing an MS in Computer Science at UC San Diego, with interests spanning AI agents, LLM systems, software engineering, graphics, and computer vision.</p></header>
+    <div class="about-grid"><div><span class="small-label">Education</span><h2>UC San Diego</h2><p>MS Computer Science</p></div><div><span class="small-label">Current interests</span><h2>Research & building</h2><p>Reliable agents, useful knowledge systems, and the intersection of code and visual understanding.</p></div></div>
+    <p class="about-tail">I use this site to share work in progress and technical notes. <a class="text-link" href={href('notes/')}>Browse the notes ↗</a></p>
+  </div>
+</BaseLayout>
