@@ -4,7 +4,7 @@ A static Astro portfolio with a Markdown technical notebook. No backend or CMS.
 
 ## View the site
 
-Once the [deployment workflow](https://github.com/heziq/heziq/actions/workflows/deploy.yml) finishes, open [the website](https://heziq.github.io/heziq/).
+Open [the website](https://heziq.github.io/heziq/). Each push to `main` updates it through the [deployment workflow](https://github.com/heziq/heziq/actions/workflows/deploy.yml).
 
 To view it locally now, run `npm install` and `npm run dev`, then open the local URL printed by Astro. The project base path is `/heziq/`, so the URL will normally end in `/heziq/`.
 
