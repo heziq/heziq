@@ -3,13 +3,12 @@ title: "Heap / Priority Queue"
 date: 2026-10-05
 category: "Algorithms"
 tags: [heap, priority-queue, leetcode]
-description: "Using heaps for top-k, merging sorted streams, and maintaining dynamic order statistics."
+description: "Using heaps for top-k selection, priority-based processing, merging sorted sources, and streaming medians."
 ---
 
 ## 0. Heap / Priority Queue Basics
 
-A **heap** is a tree-based data structure that efficiently keeps track of the minimum or maximum element.
-
+A **heap** is a tree-based data structure used when we repeatedly need quick access to the smallest or largest element.
 Python's `heapq` implements a **min-heap**.
 
 ```python
@@ -31,7 +30,7 @@ heapq.heappop(heap)       # O(log n)
 heap[0]                   # minimum, O(1)
 ```
 
-The heap does **not** keep the whole list sorted.
+A heap is **not a sorted array**.
 
 For example:
 
@@ -39,57 +38,38 @@ For example:
 heap = [1, 3, 2, 7, 5]
 ```
 
-This can be a valid heap even though the array itself is not sorted.
+can be a valid heap even though the whole list is not sorted.
 
-The only guarantee is:
+The main guarantee is:
 
 ```text
 heap[0] = minimum element
 ```
 
-and every parent is no larger than its children.
-
-> Python `heapq` 默认是 min-heap。最重要的是记住：**只保证 `heap[0]` 最小，不保证整个 array 有序。**
-
----
+> Python `heapq` 默认是 min-heap。只保证 `heap[0]` 最小，不保证整个 array 有序。
 
 ### Tuple Ordering
 
-Python heaps can also store tuples:
+Heap elements can also be tuples:
 
 ```python
 heapq.heappush(heap, (2, "B"))
 heapq.heappush(heap, (1, "A"))
 ```
 
-Tuples are compared lexicographically:
+Python compares tuples from left to right:
 
 ```text
-(first value, second value, ...)
+(priority, data)
 ```
 
-Python first compares the first element. If they are equal, it compares the second element.
+If the first values are equal, it compares the second values.
 
-This is useful when the heap needs both:
-
-- a priority
-- the actual object / data
-
-Example:
-
-```python
-(priority, value)
-```
-
-> Heap 里经常放 tuple：第一位是 priority，后面保存真正的数据。
-
----
+This makes tuples useful for storing both a **priority** and the actual data.
 
 ### Simulating a Max-Heap
 
-Python does not directly use a max-heap with `heapq`.
-
-A common trick is to negate values:
+A common way to simulate a max-heap is to store negative values:
 
 ```python
 heapq.heappush(heap, -num)
@@ -101,47 +81,50 @@ Then:
 largest = -heapq.heappop(heap)
 ```
 
-Example:
+For example:
 
 ```text
 original:  10, 5, 2
-
 stored:   -10, -5, -2
 
 minimum stored value = -10
-→ represents original maximum = 10
+→ original maximum = 10
 ```
 
-> 想要 max-heap，就存负数。`-heap[0]` 就是当前最大值。
+> 想要 max-heap，就存负数；`-heap[0]` 是当前最大值。
 
 ---
 
-## 215. Kth Largest Element in an Array
+## Pattern 1: Fixed-Size Heap for Top K
 
-**Pattern: Top K with a Fixed-Size Min-Heap**
+Use this pattern when we only care about the largest or smallest `k` elements rather than fully sorting everything.
 
-We want the `k` largest elements, but we only really care about the smallest element among those `k`.
+The general idea:
 
-Maintain a min-heap of size `k`.
+```text
+for each item:
+    push item into heap
+
+    if heap size > k:
+        pop one item
+```
+
+The key is choosing the correct heap so that the element we **do not want to keep** stays at the root and can be removed efficiently.
+
+### 215. Kth Largest Element in an Array
+
+To find the kth largest element, maintain a **min-heap of size `k`**.
 
 For every number:
 
 ```text
-push number into heap
+push number
 
 if heap size > k:
     pop the smallest
 ```
 
-At the end, the heap contains the `k` largest elements seen so far.
-
-The smallest among these `k` elements is:
-
-```python
-heap[0]
-```
-
-which is exactly the **kth largest element**.
+At the end, the heap contains the largest `k` values.
 
 Example:
 
@@ -149,39 +132,57 @@ Example:
 nums = [3, 2, 1, 5, 6, 4]
 k = 2
 
-final heap contains:
+final heap:
 [5, 6]
-
-heap[0] = 5
 ```
 
-So `5` is the second largest.
+The smallest value among the largest `k` values is:
 
-> 维护一个大小为 `k` 的 min-heap。太多了就把最小的踢掉，最后留下最大的 `k` 个，而 `heap[0]` 正好是 kth largest。
+```python
+heap[0]
+```
+
+so it is exactly the kth largest element.
+
+> 维护大小为 `k` 的 min-heap；太多了就踢掉最小的，最后 `heap[0]` 就是 kth largest。
 
 ---
 
-## 973. K Closest Points to Origin
+## Pattern 2: Heap with Priority
 
-**Pattern: Heap with a Priority**
+Use this pattern when each item has a **priority**, and we repeatedly need the currently best item.
 
-Each point has a priority: its distance from the origin.
+Store:
 
-For point:
+```python
+(priority, data)
+```
+
+Then:
+
+```python
+priority, data = heapq.heappop(heap)
+```
+
+The heap automatically selects the item with the smallest priority.
+
+### 973. K Closest Points to Origin
+
+For each point:
 
 ```text
 (x, y)
 ```
 
-distance is:
+use its squared distance as the priority:
 
 ```python
-x * x + y * y
+dist = x * x + y * y
 ```
 
-There is no need to calculate the square root because square root preserves ordering.
+There is no need to calculate the square root because it does not change the ordering.
 
-Push the distance together with the point:
+Store:
 
 ```python
 heapq.heappush(heap, (dist, point))
@@ -193,27 +194,23 @@ or:
 heapq.heappush(heap, (dist, x, y))
 ```
 
-The heap orders points by `dist`.
-
-Then repeatedly pop:
+Then repeatedly call:
 
 ```python
-dist, point = heapq.heappop(heap)
+heapq.heappop(heap)
 ```
 
-Each pop returns the currently closest point.
+to retrieve the closest points.
 
 ### Important
 
-A heap is **not a sorted list**.
-
-You cannot assume:
+Do not assume:
 
 ```python
 heap[:k]
 ```
 
-contains the `k` smallest elements in sorted order.
+contains the `k` smallest elements.
 
 The heap only guarantees:
 
@@ -223,21 +220,39 @@ heap[0]
 
 is the minimum.
 
-To retrieve the smallest elements, use `heappop()` repeatedly.
+To get elements in priority order, repeatedly use `heappop()`.
 
-> Heap 是 tree structure，不是 sorted array。不能直接觉得前 `k` 个就是最小的 `k` 个；只保证 root 最小，每次 `pop` 才拿到当前最小值。
+> Heap 是 tree structure，不是 sorted array；只保证 root 最小，不能直接拿前 `k` 个当作最小的 `k` 个。
 
 ---
 
-## 23. Merge K Sorted Lists
+## Pattern 3: Merge Sorted Sources
 
-**Pattern: Merge Multiple Sorted Streams**
+When multiple sequences are already sorted, the next smallest element must be among the **current front elements** of those sequences.
+
+Instead of putting every element into the heap, keep only one current candidate from each source.
+
+The general pattern:
+
+```text
+put the first item from every source into heap
+
+while heap is not empty:
+    pop smallest candidate
+    add it to result
+
+    push the next item from the same source
+```
+
+This is also called **k-way merge**.
+
+### 23. Merge K Sorted Lists
 
 Each linked list is already sorted.
 
-Therefore, at any moment, the next smallest value must be among the **current heads** of the `k` lists.
+At any moment, the next smallest node must be one of the current heads of the `k` lists.
 
-Instead of comparing all `k` heads manually every time, put them into a min-heap.
+Store them in the heap:
 
 ```python
 heapq.heappush(heap, (node.val, i, node))
@@ -249,52 +264,59 @@ Then:
 val, i, node = heapq.heappop(heap)
 ```
 
-The popped node is the smallest current node among all lists.
-
-After taking that node, push its next node:
+After using that node, push its next node:
 
 ```python
 if node.next:
     heapq.heappush(heap, (node.next.val, i, node.next))
 ```
 
-Repeat until the heap is empty.
+The heap therefore contains at most one current candidate from each linked list.
 
 ### Why include `i`?
 
-You might want to write:
+This can cause a problem:
 
 ```python
 (node.val, node)
 ```
 
-But if two nodes have the same value, Python would then try to compare:
+If two nodes have the same value, Python tries to compare the second elements:
 
-```python
-node1 < node2
+```text
+node1 vs node2
 ```
 
-`ListNode` objects are not orderable, which can cause an error.
+But `ListNode` objects are not orderable.
 
-So use:
+Using:
 
 ```python
 (node.val, i, node)
 ```
 
-where `i` is the list index and acts as a tie-breaker.
+gives Python an integer `i` as a tie-breaker.
 
-> Heap 里永远只需要放每条 linked list 当前的 head。`i` 是 tie-breaker，避免两个 `node.val` 相同时 Python 去比较 `ListNode`。
+> Heap 里只放每条 list 当前的 candidate；`i` 是 tie-breaker，避免相同 `node.val` 时比较 `ListNode`。
 
 ---
 
-## 295. Find Median from Data Stream
+## Pattern 4: Two Heaps
 
-**Pattern: Two Heaps**
+Use two heaps when we need to maintain two ordered groups and quickly access the boundary between them.
 
-We need to continuously insert numbers and quickly find the median.
+A common structure is:
 
-Split the numbers into two halves:
+```text
+smaller half | larger half
+   max-heap  |   min-heap
+```
+
+The max-heap gives the largest value in the lower half, while the min-heap gives the smallest value in the upper half.
+
+### 295. Find Median from Data Stream
+
+Split all numbers into:
 
 ```text
 small = smaller half
@@ -308,22 +330,20 @@ small → max-heap
 large → min-heap
 ```
 
-Python implementation:
+In Python:
 
 ```python
 self.small = []   # max-heap using negative values
-self.large = []   # normal min-heap
+self.large = []   # min-heap
 ```
 
-### Invariant
-
-We want:
+We maintain two invariants:
 
 ```text
 all values in small <= all values in large
 ```
 
-and their sizes should stay balanced:
+and:
 
 ```text
 len(small) == len(large)
@@ -335,19 +355,17 @@ or:
 len(small) == len(large) + 1
 ```
 
-So `small` may contain at most one extra element.
+So `small` contains at most one extra value.
 
----
+### Moving Between Heaps
 
-### Adding a Number
-
-Since `small` is implemented using negatives:
+Since `small` stores negative values:
 
 ```python
 heapq.heappush(self.small, -num)
 ```
 
-A useful operation for moving the largest value from `small` into `large` is:
+To move its largest original value into `large`:
 
 ```python
 heapq.heappush(
@@ -356,122 +374,38 @@ heapq.heappush(
 )
 ```
 
-Why?
+because:
 
 ```text
-small stores negative values
-
 heappop(small)
-→ most negative value
-→ represents the largest original value
+→ smallest negative number
+→ largest original number
 ```
 
-Then negate it again before putting it into `large`.
-
-After insertion, rebalance the two heaps so their size difference is at most `1`.
-
-> 两堆：`small` 管较小的一半，但是用负数模拟 max-heap；`large` 管较大的一半，是正常 min-heap。
-
----
+After inserting, rebalance the two heaps so their size difference is at most `1`.
 
 ### Finding the Median
 
-If the total number of elements is odd:
+If the number of elements is odd:
 
 ```python
 median = -self.small[0]
 ```
 
-because `small` contains one extra element.
-
-If the total is even:
+If it is even:
 
 ```python
 median = (-self.small[0] + self.large[0]) / 2
 ```
 
-These are the two middle values:
+These two values are exactly:
 
 ```text
-max(small)
-min(large)
+max(smaller half)
+min(larger half)
 ```
 
-> Median 就在两堆交界处：左边最大值 `-small[0]` 和右边最小值 `large[0]`。
-
----
-
-## Heap Patterns Summary
-
-| Problem | Pattern | Key Idea |
-|---|---|---|
-| 215 Kth Largest | Fixed-Size Min-Heap | Keep only the largest `k`; root is kth largest |
-| 973 K Closest Points | Priority Heap | Use distance as heap priority |
-| 23 Merge K Sorted Lists | Merge Sorted Streams | Keep one candidate from each list |
-| 295 Find Median | Two Heaps | Max-heap for lower half + min-heap for upper half |
-
-## Main Patterns
-
-### 1. Top K
-
-Maintain a heap of size `k`.
-
-```text
-push item
-
-if size > k:
-    pop
-```
-
-Example: `215`
-
----
-
-### 2. Priority + Data
-
-Store:
-
-```python
-(priority, data)
-```
-
-or:
-
-```python
-(priority, tie_breaker, data)
-```
-
-Example: `973`, `23`
-
----
-
-### 3. Merge Sorted Sources
-
-If there are multiple already-sorted sequences, only keep the **next possible candidate** from each sequence in the heap.
-
-```text
-pop smallest candidate
-→ add it to answer
-→ push the next item from that same source
-```
-
-Example: `23`
-
----
-
-### 4. Maintain Two Halves
-
-Use:
-
-```text
-max-heap | min-heap
-
-smaller half | larger half
-```
-
-Keep the two heaps balanced.
-
-Example: `295`
+> 两堆把数据分成左右两半；median 就在交界处：`-small[0]` 和 `large[0]`。
 
 ---
 
@@ -479,13 +413,11 @@ Example: `295`
 
 ### 1. Assuming the Heap Is Sorted
 
-Wrong:
+This is not reliable:
 
 ```python
 heap[:k]
 ```
-
-does not necessarily give the `k` smallest elements.
 
 Only this is guaranteed:
 
@@ -495,33 +427,32 @@ heap[0]
 
 is the minimum.
 
----
+If you need values in order, use repeated `heappop()`.
 
 ### 2. Forgetting Python Uses a Min-Heap
 
-For a max-heap:
+Normal `heapq` behavior:
+
+```python
+heap[0]   # minimum
+```
+
+To simulate a max-heap:
 
 ```python
 heapq.heappush(heap, -num)
+largest = -heapq.heappop(heap)
 ```
 
-and retrieve with:
+### 3. Forgetting Tuple Tie-Breaking
 
-```python
--num
-```
-
----
-
-### 3. Tuple Tie-Breaking
-
-This can fail:
+This may fail:
 
 ```python
 (node.val, node)
 ```
 
-if two values are equal and `node` objects cannot be compared.
+if equal priorities cause Python to compare non-orderable objects.
 
 Use:
 
@@ -529,34 +460,31 @@ Use:
 (node.val, i, node)
 ```
 
-instead.
+with a comparable tie-breaker.
 
----
+### 4. Treating Every Heap Problem as “Push Everything”
 
-### 4. Keeping Too Much in the Heap
+Sometimes the main optimization is deciding what actually needs to stay in the heap.
 
-A heap is especially useful when we do **not** need to keep everything.
-
-For top-k problems:
+Examples:
 
 ```text
-heap size = k
+215: only keep k elements
+23: only keep one candidate per list
+295: divide elements between two heaps
 ```
 
-is often enough.
+### 5. Not Defining What the Root Represents
 
----
-
-Finally, before using a heap, ask:
+Before choosing a heap, ask:
 
 > **What value should always be easiest for me to access?**
 
-If the answer is:
+Examples:
 
-```text
-smallest / largest / next best candidate
-```
+- `215`: smallest among the current largest `k`
+- `973`: point with smallest distance
+- `23`: smallest current candidate across all lists
+- `295`: largest lower-half value and smallest upper-half value
 
-a heap is often a good choice.
-
-> 总结：Heap 题重点不是“把所有东西排序”，而是想清楚 **priority 是什么、heap 里需要保留哪些 candidate、root 应该代表什么**。
+> 总结：Heap 题先想 **priority 是什么、heap 里要保留谁、`heap[0]` 应该代表什么**。
