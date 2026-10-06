@@ -42,13 +42,27 @@ Important:
 
 ---
 
-## 200. Number of Islands
+## Pattern 1: Count Connected Components
 
-**Pattern: Count Connected Components**
+Use this pattern when the graph/grid contains separate connected groups and we need to count how many there are.
+
+The general idea:
+
+```text
+for every node:
+    if node is unvisited:
+        count += 1
+        dfs(node)
+```
+
+Each DFS call completely explores one connected component, so the next unvisited node must belong to a new component.
+
+### 200. Number of Islands
 
 Each island is one connected component of `"1"` cells.
 
 Traverse every cell. Whenever an unvisited land cell is found:
+
 1. `count += 1`
 2. Run DFS to mark the entire connected island as visited
 
@@ -59,15 +73,31 @@ for each cell:
         dfs(cell)
 ```
 
-> 每发现一个新的 `1`，就说明发现了一座新岛；先 `count += 1`，再 DFS 把整座岛标记掉。
+The DFS does not need to return anything. Its job is simply to visit the entire island.
+
+> 每发现一个新的 `1`，就发现了一座新岛；先 `count += 1`，再 DFS 把整座岛标记掉。
 
 ---
 
-## 695. Max Area of Island
+## Pattern 2: Compute a Connected Component
 
-**Pattern: Compute Connected Component Size**
+Sometimes we do not only want to find a component — we need to calculate something about it.
 
-Very similar to 200, but instead of counting how many components exist, calculate the size of each component.
+A common recursive form is:
+
+```text
+dfs(node):
+    if invalid:
+        return 0
+
+    mark visited
+
+    return current contribution + dfs(neighbors)
+```
+
+### 695. Max Area of Island
+
+Instead of counting how many islands exist, calculate the size of each island and keep the maximum.
 
 DFS returns the area of the island starting from the current cell:
 
@@ -87,7 +117,7 @@ def dfs(i, j):
     )
 ```
 
-`1` represents the current cell.
+`1` represents the current land cell.
 
 Then:
 
@@ -96,19 +126,43 @@ area = dfs(i, j)
 max_area = max(max_area, area)
 ```
 
-> 和 200 一样找 component，但 DFS 不只是标记，而是返回这个岛一共有多少格。
+The important difference from Number of Islands is what DFS means:
+
+```text
+200: dfs(cell) marks the whole component
+695: dfs(cell) returns the size of the whole component
+```
+
+> 和 200 一样找 component，但这里 DFS 还要返回这个岛一共有多少格。
 
 ---
 
-## 130. Surrounded Regions
+## Pattern 3: Reverse Search / Reachability
 
-**Pattern: Reverse Search**
+Sometimes searching from every node toward a target causes repeated work.
 
-Instead of checking whether each `"O"` is surrounded, find all `"O"` cells that are definitely **not** surrounded.
+Instead of:
+
+```text
+every node → target
+```
+
+reverse the question:
+
+```text
+target → all nodes that can reach the target
+```
+
+This is especially useful when there are only a few target/boundary locations but many possible starting nodes.
+
+### 130. Surrounded Regions
+
+Instead of checking whether every `"O"` is surrounded, find the `"O"` cells that are definitely **not** surrounded.
 
 Any `"O"` connected to the boundary cannot be captured.
 
 Algorithm:
+
 1. Start DFS from every boundary `"O"`
 2. Mark all connected `"O"` cells as safe, e.g. `"*"`
 3. Traverse the whole board
@@ -124,53 +178,77 @@ remaining O → X
 * → O
 ```
 
-> 反着想——不直接找“被包围的 O”，而是先从边界找所有“不可能被包围的 O”。
+The boundary acts as the starting point of the reverse search.
 
----
+> 反着想：不直接找“被包围的 O”，而是从边界找所有“不可能被包围的 O”。
 
-## 417. Pacific Atlantic Water Flow
-
-**Pattern: Reverse Reachability**
+### 417. Pacific Atlantic Water Flow
 
 The direct approach is to start from every cell and ask whether water can reach both oceans. This repeats a lot of work.
 
-Instead, reverse the search: ocean → same height or higher
+Instead, start from the oceans and search backward.
 
-So when searching backward from an ocean:
+Original direction:
+
+```text
+high → low
+```
+
+Reverse direction:
+
+```text
+ocean / low → same height or higher
+```
+
+So when searching backward:
 
 ```python
 neighbor_height >= current_height
 ```
 
 Run DFS twice:
+
 - From the Pacific borders → `pacific`
 - From the Atlantic borders → `atlantic`
 
-Answer:
+The answer is the intersection:
 
 ```text
 pacific ∩ atlantic
 ```
 
-> 不要每个格子往 ocean 流；从两个 ocean 反向 DFS，最后取两个 reachable set 的交集。
+These are exactly the cells that can reach both oceans in the original direction.
+
+> 从两个 ocean 反向 DFS，记录各自能到达的 cell，最后取两个 reachable set 的交集。
 
 ---
 
-## 133. Clone Graph
+## Pattern 4: DFS + Node Mapping
 
-**Pattern: Graph DFS + HashMap**
+When DFS is used to **rebuild or copy a graph**, `visited` may need to store more than just whether a node was seen.
+
+A hashmap can store:
+
+```text
+original node → new / processed node
+```
+
+This both prevents repeated work and preserves relationships between objects.
+
+### 133. Clone Graph
 
 We need to copy:
+
 - Every node
 - Every neighbor relationship
 
-Use a hashmap:
+Use:
 
 ```python
 old_to_new = {}
 ```
 
-Meaning:
+where:
 
 ```text
 original node → cloned node
@@ -192,122 +270,81 @@ def dfs(node):
     return copy
 ```
 
-The mapping must be stored **before** exploring neighbors, because the graph may contain cycles.
+The mapping must be stored **before** exploring neighbors.
 
-> 一边 DFS，一边维护 `old node → new node`；先存 mapping，再递归 neighbor，避免 cycle 无限递归。
+Otherwise, if the graph contains a cycle, DFS could recursively return to the same node before knowing that it has already been cloned.
 
----
-
-## DFS Patterns Summary
-
-| Problem | Pattern | Key Idea |
-|---|---|---|
-| 200 Number of Islands | Count Components | Find new land → `count += 1` → DFS entire component |
-| 695 Max Area of Island | Component Size | DFS returns size of current component |
-| 130 Surrounded Regions | Reverse Search | Start from boundary and mark safe cells |
-| 417 Pacific Atlantic | Reverse Reachability | Search backward from both oceans |
-| 133 Clone Graph | Graph DFS + HashMap | Store `old → new` while rebuilding graph |
-
-## Main Patterns
-
-### 1. Count Connected Components
-
-```text
-for every node:
-    if unvisited:
-        count += 1
-        dfs(node)
-```
-
-Example: `200`
-
-### 2. Compute Component Size
-
-```text
-dfs(node):
-    if invalid:
-        return 0
-
-    mark visited
-
-    return 1 + sum(dfs(neighbors))
-```
-
-Example: `695`
-
-### 3. Reverse Search
-
-Instead of:
-
-```text
-every node → target
-```
-
-try:
-
-```text
-target → all nodes that can reach target
-```
-
-Examples: `130`, `417`
-
-### 4. Graph With Cycles
-
-Use:
-
-```text
-visited / hashmap
-```
-
-before recursively exploring neighbors.
-
-Example: `133`
+> 一边 DFS，一边维护 `old → new`；先存 mapping，再递归 neighbors，避免 cycle 无限递归。
 
 ---
 
 ## Common Mistakes
 
+### 1. Wrong Boundary Check
+
 ```python
-# boundary
 i >= n      # correct
 i > n       # wrong
 ```
 
+`i == n` is already outside the valid index range.
+
+### 2. Mixing Rows and Columns
+
 ```python
-# rows / columns
 n = len(grid)
 m = len(grid[0])
 
+# valid:
 i < n
 j < m
 ```
 
-```python
-# assignment vs comparison
-board[i][j] = "X"
-board[i][j] == "X"
+### 3. Marking Visited Too Late
+
+Usually:
+
+```text
+validate node
+→ mark visited
+→ visit neighbors
 ```
 
-Also check whether the input uses:
+Do not wait until after recursion to mark the node, or neighboring nodes may recursively visit each other.
+
+### 4. Assignment vs. Comparison
+
+```python
+board[i][j] = "X"     # assignment
+board[i][j] == "X"    # comparison
+```
+
+### 5. Checking the Input Type
+
+Some problems use:
 
 ```python
 1 / 0
 ```
 
-or:
+while others use:
 
 ```python
 "1" / "0"
 ```
 
-Finally, before writing DFS, always ask:
+### 6. Not Defining What DFS Means
+
+Before writing the recursion, ask:
 
 > **What exactly should `dfs(node)` do or return?**
 
-For example:
+Examples:
+
 - `200`: mark the whole component
 - `695`: return component size
-- `130 / 417`: mark reachable cells
+- `130`: mark nodes connected to the boundary
+- `417`: mark nodes reachable from an ocean in reverse
 - `133`: return the cloned node
 
-> 总结：DFS 题最值得记的不是完整代码，而是 **起点是谁、什么时候 mark visited、DFS 返回什么、有没有必要反向搜索**。
+> 总结：DFS 题最值得先想的是 **从哪里开始、什么时候 mark visited、`dfs()` 代表什么、能不能反向搜索**。
