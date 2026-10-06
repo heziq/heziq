@@ -3,7 +3,7 @@ import ThemeToggle from './ThemeToggle.astro';
 import { href } from '../lib/site';
 const path = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '') || '/';
 const links = [
-  ['Home', ''], ['Notes', 'notes/'], ['Projects', 'projects/'], ['About', 'about/'], ['Resume', 'resume/'],
+  ['Home', ''], ['Notes', 'notes/'], ['Projects', 'projects/'],
 ] as const;
 ---
 <header class="site-header">
@@ -11,7 +11,6 @@ const links = [
     <a class="brand" href={href()} aria-label="Jessica Yang, home"><span class="brand-mark">JY<span class="brand-dot">.</span></span><span class="brand-name">Jessica Yang</span></a>
     <nav aria-label="Main navigation">
       {links.map(([label, target]) => <a href={href(target)} aria-current={path === `/${target}` || (target && path.startsWith(`/${target}`)) ? 'page' : undefined}>{label}</a>)}
-      <a class="nav-github" href="https://github.com/heziq" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
     </nav>
     <ThemeToggle />
   </div>

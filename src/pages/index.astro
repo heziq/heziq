@@ -21,17 +21,14 @@ const recentNotes = notes.slice(0, 3);
           <a class="button button-secondary" href={href('notes/')}>Read notes <span aria-hidden="true">↗</span></a>
         </div>
       </div>
-      <div class="hero-index" aria-label="Current areas of interest">
-        <div class="index-head"><span>FIELD NOTES</span><span>JY / 2026</span></div>
+      <div class="hero-index" aria-label="Personal information">
+        <div class="index-head"><span>PROFILE</span><span>JY / 2026</span></div>
         <div class="index-rule"></div>
-        <p class="index-label">Currently exploring</p>
-        <ul>
-          <li><span>01</span> AI agents & recovery</li>
-          <li><span>02</span> LLM systems</li>
-          <li><span>03</span> Software engineering</li>
-          <li><span>04</span> Graphics & vision</li>
-        </ul>
-        <div class="index-foot"><span>San Diego, CA</span><span>↗</span></div>
+        <dl class="profile-details">
+          <div><dt>Based in</dt><dd>San Diego, CA</dd></div>
+          <div><dt>Education</dt><dd>UC San Diego<br />MS Computer Science</dd></div>
+        </dl>
+        <a class="profile-link" href="https://github.com/heziq"><span>GitHub</span><span>github.com/heziq ↗</span></a>
       </div>
     </section>
 
@@ -49,5 +46,6 @@ const recentNotes = notes.slice(0, 3);
       <div class="section-heading"><div><p class="eyebrow">From the notebook</p><h2 id="notes-title">Recent notes</h2></div><a class="text-link" href={href('notes/')}>View all notes <span aria-hidden="true">↗</span></a></div>
       <div class="note-grid">{recentNotes.map((note) => <NoteCard note={note} />)}</div>
     </section>
+
   </div>
 </BaseLayout>

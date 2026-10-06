@@ -43,4 +43,4 @@ The workflow in `.github/workflows/deploy.yml` builds and deploys on every push 
 
 `astro.config.mjs` reads `GITHUB_REPOSITORY` during Actions builds. In `heziq/heziq`, the site uses `https://heziq.github.io/heziq/`. If the repository is renamed to `heziq.github.io`, it automatically uses `/` as the base path. For a different owner or repository, the same variables provide the matching site URL and base path.
 
-Project summaries and links live in `src/lib/projects.ts`. The resume page is a placeholder until a PDF or HTML resume is ready.
+Project summaries and links live in `src/lib/projects.ts`. Contact links are on the home page in `src/pages/index.astro`.
