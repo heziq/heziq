@@ -1,5 +1,5 @@
 ---
-title: "DFS"
+title: "DFS(Depth-First Search)"
 date: 2026-10-04
 category: "Algorithms"
 tags: [graph, leetcode]
@@ -38,7 +38,7 @@ Important:
 - Mark `visited` **before** visiting neighbors
 - For graphs with cycles, always use `visited` or a hashmap
 
-> 中文：DFS 最重要的是先想清楚 `dfs(node)` 到底代表什么，然后及时 mark visited，防止重复访问或死循环。
+> 想清楚 `dfs(node)` 到底代表什么，然后及时 mark visited，防止重复访问或死循环。
 
 ---
 
@@ -59,9 +59,7 @@ for each cell:
         dfs(cell)
 ```
 
-The DFS itself does not need to return anything. Its job is simply to remove / mark the entire component.
-
-> 中文：每发现一个新的 `1`，就说明发现了一座新岛；先 `count += 1`，再 DFS 把整座岛标记掉。
+> 每发现一个新的 `1`，就说明发现了一座新岛；先 `count += 1`，再 DFS 把整座岛标记掉。
 
 ---
 
@@ -98,7 +96,7 @@ area = dfs(i, j)
 max_area = max(max_area, area)
 ```
 
-> 中文：和 200 一样找 component，但 DFS 不只是标记，而是返回这个岛一共有多少格。
+> 和 200 一样找 component，但 DFS 不只是标记，而是返回这个岛一共有多少格。
 
 ---
 
@@ -126,7 +124,7 @@ remaining O → X
 * → O
 ```
 
-> 中文：反着想——不直接找“被包围的 O”，而是先从边界找所有“不可能被包围的 O”。
+> 反着想——不直接找“被包围的 O”，而是先从边界找所有“不可能被包围的 O”。
 
 ---
 
@@ -136,19 +134,7 @@ remaining O → X
 
 The direct approach is to start from every cell and ask whether water can reach both oceans. This repeats a lot of work.
 
-Instead, reverse the search.
-
-Original water flow:
-
-```text
-high → low
-```
-
-Reverse DFS:
-
-```text
-ocean → same height or higher
-```
+Instead, reverse the search: ocean → same height or higher
 
 So when searching backward from an ocean:
 
@@ -166,7 +152,7 @@ Answer:
 pacific ∩ atlantic
 ```
 
-> 中文：不要每个格子往 ocean 流；从两个 ocean 反向 DFS，最后取两个 reachable set 的交集。
+> 不要每个格子往 ocean 流；从两个 ocean 反向 DFS，最后取两个 reachable set 的交集。
 
 ---
 
@@ -208,7 +194,7 @@ def dfs(node):
 
 The mapping must be stored **before** exploring neighbors, because the graph may contain cycles.
 
-> 中文：一边 DFS，一边维护 `old node → new node`；先存 mapping，再递归 neighbor，避免 cycle 无限递归。
+> 一边 DFS，一边维护 `old node → new node`；先存 mapping，再递归 neighbor，避免 cycle 无限递归。
 
 ---
 
@@ -324,4 +310,4 @@ For example:
 - `130 / 417`: mark reachable cells
 - `133`: return the cloned node
 
-> 中文总结：DFS 题最值得记的不是完整代码，而是 **起点是谁、什么时候 mark visited、DFS 返回什么、有没有必要反向搜索**。
+> 总结：DFS 题最值得记的不是完整代码，而是 **起点是谁、什么时候 mark visited、DFS 返回什么、有没有必要反向搜索**。
