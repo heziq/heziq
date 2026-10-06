@@ -1,0 +1,17 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import NoteCard from '../../../components/NoteCard.astro';
+import { href, newestFirst, tagSlug } from '../../../lib/site';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('notes');
+  const formats = [...new Set(notes.flatMap((note) => note.data.formats))];
+  return formats.map((format) => ({ params: { format: tagSlug(format) }, props: { format } }));
+}
+const { format } = Astro.props as { format: string };
+const notes = (await getCollection('notes')).filter((note) => note.data.formats.includes(format)).sort(newestFirst);
+---
+<BaseLayout title={`${format} writing`} description={`${format} by Jessica Yang.`}>
+  <div class="shell page"><div class="note-breadcrumb"><a href={href('notes/')}>Writing</a><span>/</span><span>{format}</span></div><header class="page-heading compact-heading"><p class="eyebrow">Format / {notes.length} entries</p><h1>{format}</h1></header><div class="note-grid">{notes.map((note) => <NoteCard note={note} />)}</div></div>
+</BaseLayout>

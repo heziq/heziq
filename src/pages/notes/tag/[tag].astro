@@ -6,12 +6,12 @@ import { href, newestFirst, tagSlug } from '../../../lib/site';
 
 export async function getStaticPaths() {
   const notes = await getCollection('notes');
-  const tags = [...new Set(notes.flatMap((note) => note.data.tags))];
+  const tags = [...new Set(notes.flatMap((note) => note.data.topics))];
   return tags.map((tag) => ({ params: { tag: tagSlug(tag) }, props: { tag } }));
 }
 const { tag } = Astro.props as { tag: string };
-const notes = (await getCollection('notes')).filter((note) => note.data.tags.includes(tag)).sort(newestFirst);
+const notes = (await getCollection('notes')).filter((note) => note.data.topics.includes(tag)).sort(newestFirst);
 ---
-<BaseLayout title={`#${tag} notes`} description={`Technical notes tagged ${tag} by Jessica Yang.`}>
-  <div class="shell page"><div class="note-breadcrumb"><a href={href('notes/')}>Notes</a><span>/</span><span>#{tag}</span></div><header class="page-heading compact-heading"><p class="eyebrow">Topic / {notes.length} notes</p><h1>#{tag}</h1></header><div class="note-grid">{notes.map((note) => <NoteCard note={note} />)}</div></div>
+<BaseLayout title={`${tag} writing`} description={`Writing about ${tag} by Jessica Yang.`}>
+  <div class="shell page"><div class="note-breadcrumb"><a href={href('notes/')}>Writing</a><span>/</span><span>{tag}</span></div><header class="page-heading compact-heading"><p class="eyebrow">Topic / {notes.length} entries</p><h1>{tag}</h1></header><div class="note-grid">{notes.map((note) => <NoteCard note={note} />)}</div></div>
 </BaseLayout>

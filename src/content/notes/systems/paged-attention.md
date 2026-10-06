@@ -1,8 +1,9 @@
 ---
 title: "PagedAttention"
 date: 2026-10-02
-category: "Systems"
-tags: [llm, inference]
+category: "Tech Notes"
+topics: [Systems, AI / Agents, LLM, Inference]
+formats: [Study Notes]
 description: "A short starting point for understanding paged KV-cache management."
 ---
 

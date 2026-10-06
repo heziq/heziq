@@ -1,6 +1,6 @@
-# Portfolio and notes
+# Portfolio and writing
 
-A static Astro portfolio with a Markdown technical notebook. No backend or CMS.
+A static Astro portfolio with Markdown writing. No backend or CMS.
 
 ## View the site
 
@@ -17,7 +17,7 @@ npm run check
 npm run build
 ```
 
-## Add a note
+## Add writing
 
 Create `src/content/notes/<subject>/<slug>.md` with frontmatter like:
 
@@ -25,8 +25,9 @@ Create `src/content/notes/<subject>/<slug>.md` with frontmatter like:
 ---
 title: "My new note"
 date: 2026-10-05
-category: "Algorithms"
-tags: [graph, leetcode]
+category: "Tech Notes"
+topics: [Algorithms, Graph, LeetCode]
+formats: [Study Notes]
 description: "One sentence about the note."
 ---
 
@@ -35,7 +36,7 @@ description: "One sentence about the note."
 Write in Markdown.
 ```
 
-Valid categories are `Algorithms`, `Systems`, `AI / Agents`, `Research`, and `Graphics / CV`. The site builds note pages, category lists, tag pages, recent notes, and article navigation automatically. Dates determine ordering. Push the note to `main` to trigger deployment.
+Use `Tech Notes` or `Other` for `category`. Add as many `topics` and `formats` as fit the piece; for example, a paper reading about agents could use `topics: [AI / Agents, Systems]` and `formats: [Paper Notes]`. Topics and formats each get their own browse pages. The article layout keeps the writing list on the left and the current article's headings on the right. Dates determine ordering. Push the note to `main` to trigger deployment.
 
 ## GitHub Pages
 

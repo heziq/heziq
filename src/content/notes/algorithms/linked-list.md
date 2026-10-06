@@ -1,8 +1,9 @@
 ---
 title: "Linked List"
 date: 2026-10-03
-category: "Algorithms"
-tags: [linked-list, leetcode]
+category: "Tech Notes"
+topics: [Algorithms, Linked List, LeetCode]
+formats: [Study Notes]
 description: "Pointer patterns and a few invariants for linked-list problems."
 ---
 
