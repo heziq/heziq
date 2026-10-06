@@ -198,7 +198,7 @@ The mapping must be stored **before** exploring neighbors, because the graph may
 
 ---
 
-# DFS Patterns Summary
+## DFS Patterns Summary
 
 | Problem | Pattern | Key Idea |
 |---|---|---|
