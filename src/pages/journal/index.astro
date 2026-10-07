@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { href } from '../../lib/site';
+---
+<BaseLayout title="Journal" description="Personal writing by Jessica Yang on books, films, games, and travel.">
+  <div class="shell page">
+    <header class="page-heading"><p class="eyebrow">Beyond the technical notebook</p><h1>Journal</h1><p>A place for thoughts on books, films, games, and places I visit.</p></header>
+    <div class="quiet-panel">No entries yet. In the meantime, explore my <a href={href('notes/')}>notes ↗</a></div>
+  </div>
+</BaseLayout>

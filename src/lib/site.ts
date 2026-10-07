@@ -1,6 +1,6 @@
 import type { CollectionEntry } from 'astro:content';
 
-export const categories = ['Tech Notes', 'Other'] as const;
+export const categories = ['Algorithms', 'Paper Reading', 'Learn'] as const;
 
 export const categorySlug = (category: string) => category.toLowerCase().replace(/\s*\/\s*/g, '-').replace(/\s+/g, '-');
 export const href = (path = '') => `${import.meta.env.BASE_URL.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;

@@ -5,12 +5,12 @@ import NoteCard from '../../../components/NoteCard.astro';
 import { categories, categorySlug, href, newestFirst } from '../../../lib/site';
 
 export function getStaticPaths() {
-  return [...categories, 'Algorithms', 'Systems', 'AI / Agents', 'Research', 'Graphics / CV'].map((category) => ({ params: { category: categorySlug(category) }, props: { category } }));
+  return [...new Set([...categories, 'Systems', 'AI / Agents', 'Research', 'Graphics / CV', 'Tech Notes', 'Other'])].map((category) => ({ params: { category: categorySlug(category) }, props: { category } }));
 }
 const { category } = Astro.props as { category: string };
-const isSection = categories.some((section) => section === category);
-const notes = (await getCollection('notes')).filter((note) => isSection ? note.data.category === category : note.data.topics.includes(category)).sort(newestFirst);
+const isCategory = categories.some((item) => item === category);
+const notes = (await getCollection('notes')).filter((note) => category === 'Tech Notes' || (isCategory ? note.data.category === category : note.data.tags.includes(category))).sort(newestFirst);
 ---
-<BaseLayout title={`${category} writing`} description={`${category} writing by Jessica Yang.`}>
-  <div class="shell page"><div class="note-breadcrumb"><a href={href('notes/')}>Writing</a><span>/</span><span>{category}</span></div><header class="page-heading compact-heading"><p class="eyebrow">{isSection ? 'Section' : 'Topic'} / {notes.length} entries</p><h1>{category}</h1></header>{notes.length ? <div class="note-grid">{notes.map((note) => <NoteCard note={note} />)}</div> : <div class="quiet-panel">Nothing here yet. <a href={href('notes/')}>Browse all writing ↗</a></div>}</div>
+<BaseLayout title={`${category} notes`} description={`${category} notes by Jessica Yang.`}>
+  <div class="shell page"><div class="note-breadcrumb"><a href={href('notes/')}>Notes</a><span>/</span><span>{category}</span></div><header class="page-heading compact-heading"><p class="eyebrow">{isCategory ? 'Category' : 'Archive'} / {notes.length} notes</p><h1>{category}</h1></header>{notes.length ? <div class="note-grid">{notes.map((note) => <NoteCard note={note} />)}</div> : <div class="quiet-panel">No notes here yet. <a href={href('notes/')}>Browse all notes ↗</a></div>}</div>
 </BaseLayout>

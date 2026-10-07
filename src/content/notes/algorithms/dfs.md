@@ -1,9 +1,8 @@
 ---
 title: "DFS(Depth-First Search)"
 date: 2026-10-04
-category: "Tech Notes"
-topics: [Algorithms, Graph, LeetCode]
-formats: [Study Notes]
+category: "Algorithms"
+tags: [Graph, LeetCode]
 description: "Choosing a traversal and keeping visited-state bugs out of graph problems."
 ---
 

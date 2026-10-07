@@ -7,5 +7,5 @@ const { note } = Astro.props as { note: CollectionEntry<'notes'> };
   <div class="note-card-top"><span>{note.data.category}</span><time datetime={note.data.date.toISOString()}>{formatDate(note.data.date)}</time></div>
   <h3><a href={noteHref(note)}>{note.data.title}</a></h3>
   <p>{note.data.description}</p>
-  <div class="note-card-bottom"><div class="note-tags">{note.data.topics.map((topic) => <a href={href(`notes/tag/${tagSlug(topic)}/`)}>#{topic}</a>)}{note.data.formats.map((format) => <a class="format-tag" href={href(`notes/format/${tagSlug(format)}/`)}>{format}</a>)}</div><span aria-hidden="true">↗</span></div>
+  <div class="note-card-bottom"><div class="note-tags">{note.data.tags.map((tag) => <a href={href(`notes/tag/${tagSlug(tag)}/`)}>#{tag}</a>)}</div><span aria-hidden="true">↗</span></div>
 </article>

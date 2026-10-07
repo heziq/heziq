@@ -5,13 +5,12 @@ import NoteCard from '../../components/NoteCard.astro';
 import { categories, categorySlug, href, newestFirst, tagSlug } from '../../lib/site';
 
 const notes = (await getCollection('notes')).sort(newestFirst);
-const topics = [...new Set(notes.flatMap((note) => note.data.topics))].sort();
-const formats = [...new Set(notes.flatMap((note) => note.data.formats))].sort();
+const tags = [...new Set(notes.flatMap((note) => note.data.tags))].sort();
 ---
-<BaseLayout title="Writing" description="Technical notes, reflections, and other writing by Jessica Yang.">
+<BaseLayout title="Notes" description="Technical notes by Jessica Yang on algorithms, AI, systems, and more.">
   <div class="shell page">
-    <header class="page-heading"><p class="eyebrow">Notes, ideas, and things worth remembering</p><h1>Writing</h1><p>Technical notes now, with room for reflections on books, films, games, and places along the way.</p></header>
-    <section class="category-section" aria-labelledby="browse-title"><div class="section-heading"><div><p class="eyebrow">Explore the archive</p><h2 id="browse-title">Browse by section</h2></div></div><div class="category-grid writing-groups">{categories.map((category) => <a class="category-card" href={href(`notes/category/${categorySlug(category)}/`)}><span>{category}</span><small>{notes.filter((note) => note.data.category === category).length} entries</small><b aria-hidden="true">↗</b></a>)}</div><div class="writing-filters"><div><strong>Topics</strong>{topics.map((topic) => <a href={href(`notes/tag/${tagSlug(topic)}/`)}>{topic}</a>)}</div><div><strong>Formats</strong>{formats.map((format) => <a href={href(`notes/format/${tagSlug(format)}/`)}>{format}</a>)}</div></div></section>
-    <section class="section-block" aria-labelledby="all-notes-title"><div class="section-heading"><div><p class="eyebrow">Latest first</p><h2 id="all-notes-title">All writing</h2></div><span class="count-label">{notes.length} entries</span></div><div class="note-grid">{notes.map((note) => <NoteCard note={note} />)}</div></section>
+    <header class="page-heading"><p class="eyebrow">Technical notebook / growing collection</p><h1>Notes</h1><p>Working notes, useful patterns, and things worth remembering. Browse by category or start with the latest entries.</p></header>
+    <section class="category-section" aria-labelledby="browse-title"><div class="section-heading"><div><p class="eyebrow">Explore the archive</p><h2 id="browse-title">Browse by category</h2></div></div><div class="category-grid note-categories">{categories.map((category) => <a class="category-card" href={href(`notes/category/${categorySlug(category)}/`)}><span>{category}</span><small>{notes.filter((note) => note.data.category === category).length} notes</small><b aria-hidden="true">↗</b></a>)}</div><div class="tag-filters"><div><strong>Tags</strong>{tags.map((tag) => <a href={href(`notes/tag/${tagSlug(tag)}/`)}>{tag}</a>)}</div></div></section>
+    <section class="section-block" aria-labelledby="all-notes-title"><div class="section-heading"><div><p class="eyebrow">Latest first</p><h2 id="all-notes-title">All notes</h2></div><span class="count-label">{notes.length} entries</span></div><div class="note-grid">{notes.map((note) => <NoteCard note={note} />)}</div></section>
   </div>
 </BaseLayout>

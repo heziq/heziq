@@ -3,8 +3,8 @@ import type { CollectionEntry } from 'astro:content';
 import { categories, categorySlug, href, noteHref } from '../lib/site';
 const { notes, currentId } = Astro.props as { notes: CollectionEntry<'notes'>[]; currentId?: string };
 ---
-<aside class="notes-sidebar" aria-label="Writing by section">
-  <div class="sidebar-heading">Browse writing</div>
+<aside class="notes-sidebar" aria-label="Notes by category">
+  <div class="sidebar-heading">Browse notes</div>
   {categories.map((category) => {
     const items = notes.filter((note) => note.data.category === category);
     return <div class="sidebar-group">

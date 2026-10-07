@@ -1,9 +1,8 @@
 ---
 title: "Heap / Priority Queue"
 date: 2026-10-05
-category: "Tech Notes"
-topics: [Algorithms, Heap, Priority Queue, LeetCode]
-formats: [Reference]
+category: "Algorithms"
+tags: [Heap, Priority Queue, LeetCode]
 description: "Using heaps for top-k selection, priority-based processing, merging sorted sources, and streaming medians."
 ---
 

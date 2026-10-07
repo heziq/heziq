@@ -3,7 +3,7 @@ import ThemeToggle from './ThemeToggle.astro';
 import { href } from '../lib/site';
 const path = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '') || '/';
 const links = [
-  ['Home', ''], ['Writing', 'notes/'], ['Projects', 'projects/'],
+  ['Home', ''], ['Notes', 'notes/'], ['Journal', 'journal/'], ['Projects', 'projects/'],
 ] as const;
 ---
 <header class="site-header">
