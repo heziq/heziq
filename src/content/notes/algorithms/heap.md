@@ -32,19 +32,11 @@ heap[0]                   # minimum, O(1)
 
 A heap is **not a sorted array**.
 
-For example:
-
-```python
-heap = [1, 3, 2, 7, 5]
-```
+For example: `heap = [1, 3, 2, 7, 5]`
 
 can be a valid heap even though the whole list is not sorted.
 
-The main guarantee is:
-
-```text
-heap[0] = minimum element
-```
+The main guarantee is: `heap[0] = minimum element`
 
 > Python `heapq` 默认是 min-heap。只保证 `heap[0]` 最小，不保证整个 array 有序。
 
@@ -136,11 +128,7 @@ final heap:
 [5, 6]
 ```
 
-The smallest value among the largest `k` values is:
-
-```python
-heap[0]
-```
+The smallest value among the largest `k` values is: `heap[0]`
 
 so it is exactly the kth largest element.
 
@@ -168,11 +156,7 @@ The heap automatically selects the item with the smallest priority.
 
 ### 973. K Closest Points to Origin
 
-For each point:
-
-```text
-(x, y)
-```
+For each point: `(x, y)`
 
 use its squared distance as the priority:
 
@@ -204,21 +188,9 @@ to retrieve the closest points.
 
 ### Important
 
-Do not assume:
+Do not assume: `heap[:k]` contains the `k` smallest elements.
 
-```python
-heap[:k]
-```
-
-contains the `k` smallest elements.
-
-The heap only guarantees:
-
-```python
-heap[0]
-```
-
-is the minimum.
+The heap only guarantees: `heap[0]` is the minimum.
 
 To get elements in priority order, repeatedly use `heappop()`.
 
@@ -413,19 +385,9 @@ min(larger half)
 
 ### 1. Assuming the Heap Is Sorted
 
-This is not reliable:
+This is not reliable:`heap[:k]`
 
-```python
-heap[:k]
-```
-
-Only this is guaranteed:
-
-```python
-heap[0]
-```
-
-is the minimum.
+Only this is guaranteed:`heap[0]` is the minimum.
 
 If you need values in order, use repeated `heappop()`.
 
