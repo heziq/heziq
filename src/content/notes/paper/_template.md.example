@@ -1,0 +1,35 @@
+---
+title: "Paper Title"
+date: 2026-10-14
+category: "Paper Reading"
+tags: [AI, Systems]
+description: "One sentence on the paper's main idea and why it is useful."
+---
+
+> Paper: [Paper Title](https://example.com/paper)
+> Authors: Author names · Year: 2026
+
+## Why I read this
+
+What question brought me to this paper?
+
+## Problem and main idea
+
+What problem does it solve? Explain the central idea in my own words.
+
+## Method
+
+How does the method work? Add a diagram or a short example if helpful.
+
+## Results
+
+Which experiments or findings support the paper's claims?
+
+## Limitations and questions
+
+- What assumptions does the method make?
+- What remains unclear or worth testing?
+
+## My takeaways
+
+What will I remember or use later?

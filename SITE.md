@@ -37,6 +37,8 @@ Write in Markdown.
 
 Use `Algorithms`, `Paper Reading`, or `Learn` for `category`. Tags can overlap across categories; for example, a paper reading about agents could use `category: "Paper Reading"` and `tags: [AI, Systems]`. The article layout keeps notes grouped by category on the left and the current article's headings on the right. The Journal page is separate and currently has no entries. Dates determine ordering. Push the note to `main` to trigger deployment.
 
+For paper reading notes, copy `src/content/notes/paper/_template.md.example` to `src/content/notes/paper/<paper-slug>.md`. Replace the sample title, date, tags, description, paper link, and body. Use a short lowercase filename such as `attention-is-all-you-need.md`; it becomes part of the note URL. Keep `category: "Paper Reading"` so the note appears in that category. Use a few consistent topic tags (for example, `AI`, `Systems`, `LLM`) so tag pages group related notes. The `.example` template is not published as a note.
+
 ## GitHub Pages
 
 The workflow in `.github/workflows/deploy.yml` builds and deploys on every push to `main`. GitHub Pages is configured to use GitHub Actions as its source.
