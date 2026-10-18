@@ -5,7 +5,7 @@ import { projects } from '../lib/projects';
 ---
 <BaseLayout title="Projects" description="Selected software engineering, AI, and graphics projects by Jessica Yang.">
   <div class="shell page">
-    <header class="page-heading"><p class="eyebrow">Portfolio / selected work</p><h1>Projects</h1><p>Experiments and systems across software engineering, AI, and visual computing. More details will be added as these projects develop.</p></header>
+    <header class="page-heading"><h1>Projects</h1><p>Experiments and systems across software engineering, AI, and visual computing. More details will be added as these projects develop.</p></header>
     <div class="project-grid">{projects.map((project, index) => <ProjectCard project={project} index={index} />)}</div>
   </div>
 </BaseLayout>

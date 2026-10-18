@@ -4,7 +4,12 @@ import { href } from '../../lib/site';
 ---
 <BaseLayout title="Journal" description="Personal writing by Jessica Yang on books, films, games, and travel.">
   <div class="shell page">
-    <header class="page-heading"><p class="eyebrow">Beyond the technical notebook</p><h1>Journal</h1><p>A place for thoughts on books, films, games, and places I visit.</p></header>
-    <div class="quiet-panel">No entries yet. In the meantime, explore my <a href={href('notes/')}>notes ↗</a></div>
+    <header class="page-heading"><h1>Journal</h1><p>A place for thoughts on books, films, games, and places I visit.</p></header>
+    <div class="journal-gallery" aria-label="Scenes from the coast">
+      <figure><img src={href('images/coast-waves.webp')} alt="A wave breaking over rocks beside the ocean" width="1820" height="1026" /><figcaption>At the water's edge</figcaption></figure>
+      <figure><img src={href('images/coast-park.webp')} alt="Palm trees beside a grassy coastal park" width="1782" height="1170" /><figcaption>An afternoon outside</figcaption></figure>
+      <figure><img src={href('images/coast-spray.webp')} alt="Ocean spray rising near a rocky coastline" width="998" height="1162" /><figcaption>Water in motion</figcaption></figure>
+    </div>
+    <div class="journal-note">Writing will live here soon. For now, you can explore my <a href={href('notes/')}>technical notes ↗</a></div>
   </div>
 </BaseLayout>

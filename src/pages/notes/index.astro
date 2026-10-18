@@ -10,7 +10,7 @@ const tags = [...new Set(notes.flatMap((note) => note.data.tags))].sort();
 ---
 <BaseLayout title="Notes" description="Technical notes by Jessica Yang on algorithms, AI, systems, and more.">
   <div class="shell page">
-    <header class="page-heading"><p class="eyebrow">Technical notebook / growing collection</p><h1>Notes</h1><p>Working notes, useful patterns, and things worth remembering. Browse by category or start with the latest entries.</p></header>
+    <header class="page-heading"><h1>Notes</h1><p>Working notes, useful patterns, and things worth remembering. Browse by category or start with the latest entries.</p></header>
     <NotesSearch />
     <section class="category-section" aria-labelledby="browse-title"><div class="section-heading"><div><p class="eyebrow">Explore the archive</p><h2 id="browse-title">Browse by category</h2></div></div><div class="category-grid note-categories">{categories.map((category) => <a class="category-card" href={href(`notes/category/${categorySlug(category)}/`)}><span>{category}</span><small>{notes.filter((note) => note.data.category === category).length} notes</small><b aria-hidden="true">↗</b></a>)}</div><div class="tag-filters"><div><strong>Tags</strong>{tags.map((tag) => <a href={href(`notes/tag/${tagSlug(tag)}/`)}>{tag}</a>)}</div></div></section>
     <section class="section-block" aria-labelledby="all-notes-title"><div class="section-heading"><div><p class="eyebrow">Latest first</p><h2 id="all-notes-title">All notes</h2></div><span class="count-label">{notes.length} entries</span></div><div class="note-grid">{notes.map((note) => <NoteCard note={note} />)}</div></section>
