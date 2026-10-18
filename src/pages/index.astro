@@ -3,7 +3,6 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import NoteCard from '../components/NoteCard.astro';
-import CoastalStudy from '../components/CoastalStudy.astro';
 import { projects } from '../lib/projects';
 import { categories, categorySlug, href, newestFirst } from '../lib/site';
 
@@ -14,17 +13,23 @@ const recentNotes = notes.slice(0, 3);
   <div class="shell home">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <p class="eyebrow">Jessica Yang <span aria-hidden="true">/</span> San Diego, California</p>
-        <h1 id="hero-title">Hi, I'm <em>Jessica.</em></h1>
+        <p class="eyebrow">Jessica Yang · CS / AI</p>
+        <h1 id="hero-title">Hi, I'm Jessica.</h1>
         <p class="hero-intro">I’m an MS Computer Science student at UC San Diego, working across AI agents, LLM systems, software engineering, graphics, and computer vision.</p>
         <div class="hero-actions">
           <a class="button button-primary" href={href('projects/')}>View projects <span aria-hidden="true">↗</span></a>
           <a class="button button-secondary" href={href('notes/')}>Read notes <span aria-hidden="true">↗</span></a>
         </div>
       </div>
-      <CoastalStudy />
+      <aside class="hero-contact" aria-label="Personal information and links">
+        <p class="contact-heading">A little context</p>
+        <p class="contact-detail">Based in San Diego, CA<br />MS Computer Science · UC San Diego</p>
+        <div class="contact-links">
+          <a href="https://github.com/heziq" target="_blank" rel="noopener noreferrer"><span>GitHub</span><span aria-hidden="true">↗</span></a>
+          <a href="https://www.linkedin.com/in/yaran-yang-8b2015240/" target="_blank" rel="noopener noreferrer"><span>LinkedIn</span><span aria-hidden="true">↗</span></a>
+        </div>
+      </aside>
     </section>
-    <div class="home-context"><span>MS Computer Science · UC San Diego</span><a href="https://github.com/heziq">Find me on GitHub <span aria-hidden="true">↗</span></a></div>
 
     <section class="section-block" aria-labelledby="projects-title">
       <div class="section-heading"><h2 id="projects-title">Selected projects</h2><a class="text-link" href={href('projects/')}>All projects <span aria-hidden="true">↗</span></a></div>
