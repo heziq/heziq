@@ -7,3 +7,14 @@ const visible = headings.filter((heading) => heading.depth === 2 || heading.dept
   <div class="sidebar-heading">On this page</div>
   <ul>{visible.map((heading) => <li class:list={['toc-item', { nested: heading.depth === 3 }]}><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ul>
 </aside>}
+<script>
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('.toc a')];
+  const headings = links.map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1))));
+  if (links.length && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(() => {
+      const active = headings.filter((heading) => heading && heading.getBoundingClientRect().top <= 130).at(-1) || headings[0];
+      links.forEach((link, index) => headings[index] === active ? link.setAttribute('aria-current', 'location') : link.removeAttribute('aria-current'));
+    }, { rootMargin: '-110px 0px -70% 0px' });
+    headings.forEach((heading) => heading && observer.observe(heading));
+  }
+</script>

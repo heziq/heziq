@@ -1,12 +1,14 @@
 ---
 import type { Project } from '../lib/projects';
 import { href } from '../lib/site';
-const { project } = Astro.props as { project: Project };
+const { project, index = 0 } = Astro.props as { project: Project; index?: number };
 ---
 <article class="project-card">
-  {project.image && <img src={href(project.image)} alt="" loading="lazy" />}
+  <div class:list={['project-visual', `visual-${index % 4}`]}>
+    {project.image ? <img src={href(project.image)} alt={`${project.title} preview`} loading="lazy" /> : <div class="visual-art" aria-hidden="true"><span></span><span></span><span></span><span></span></div>}
+    <span class="visual-caption">{project.tags[0]}</span>
+  </div>
   <div class="project-body">
-    <div class="project-top"><span class="project-type">Selected work</span><span aria-hidden="true">↗</span></div>
     <h3>{project.title}</h3>
     <p>{project.description}</p>
     <div class="project-tags">{project.tags.map((tag) => <span>{tag}</span>)}</div>
