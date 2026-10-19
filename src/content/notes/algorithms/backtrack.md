@@ -8,27 +8,16 @@ description: "Exploring decision trees through choose, recurse, and undo; unders
 
 ## 0. Backtracking Basics
 
-Backtracking is a DFS-based search technique that explores all possible solutions by making choices, recursively exploring them, and undoing those choices.
+Backtracking 是在一棵决策树上做 DFS：做选择，递归进去，再撤销。
 
-Common uses:
-- Generate subsets / combinations
-- Generate permutations
-- Partition strings
-- Construct valid sequences
-- Constraint satisfaction problems
+常见用途：子集、排列、切分字符串、构造合法序列。
 
-### Core Idea: Decision Tree
+- **State:** 已经决定的部分
+- **Choice:** 这一层可以做的下一步
+- **Leaf:** 一个完整答案，或者一条走不通的分支
+- **Pruning:** 这条分支不可能合法，就不要进去
 
-Backtracking explores an **implicit Decision Tree**.
-
-- **Node / State:** Current partial solution
-- **Edge / Choice:** One possible next decision
-- **Leaf:** A completed solution or a dead end
-- **Pruning:** Skip branches that cannot produce valid solutions
-
-Unlike ordinary graph DFS, Backtracking usually explores a decision tree rather than an explicitly given graph.
-
-**General Template:**
+和普通图 DFS 不一样，这里通常没有现成的图，树是选择长出来的。
 
 ```python
 def backtrack(state, path):
@@ -37,86 +26,35 @@ def backtrack(state, path):
         return
 
     for choice in valid_choices(state):
-        path.append(choice)     # Choose
-        backtrack(next_state, path)  # Explore
-        path.pop()              # Undo
+        path.append(choice)          # choose
+        backtrack(next_state, path)  # explore
+        path.pop()                   # undo
 ```
 
-### How Recursion and For Loop Work Together
+`for` 管同一层的不同选择，递归负责把这个选择下面的可能走完，`pop` 回到这一层再试下一个。
 
-This is the most important part.
+递归调用时，上一层的 `for` 停在这一次选择上。递归返回后，从 `pop` 后面继续，不会把这一层的循环重开。每一层有自己的循环位置；`path` 通常是同一份会被改的 list。
 
-- **For Loop → Width:** Try different choices at the current level.
-- **Recursion → Depth:** Explore the subtree corresponding to one choice.
-- **Pop → Backtrack:** Restore the previous state and try the next choice.
+> `for` 是宽度，递归是深度，`pop` 是恢复现场。返回之后上一层从刚才那次调用的下一行继续。
 
-Execution order:
-
-```text
-for loop: choice A
-    append A
-    recursion:
-        explore all possibilities under A
-    pop A
-
-for loop: choice B
-    append B
-    recursion:
-        explore all possibilities under B
-    pop B
-```
-
-**Important:** When recursion is called, the parent `for loop` is paused. After recursion returns, execution continues immediately after that recursive call.
-
-Each recursive call has its own local variables and loop position, but `path` is usually the same shared mutable list.
-
-> `for` 控制同一层的不同选择，recursion 负责深入探索，`pop()` 恢复现场。递归返回后，上一层的 `for loop` 会从暂停的位置继续，而不是重新开始。
-
-### Why Backtracking Works
-
-Every complete solution corresponds to a sequence of choices from the root to a leaf.
-
-If the algorithm:
-
-1. Enumerates all possible valid next choices
-2. Recursively explores each choice
-3. Restores the state before trying another choice
-
-then all valid solutions can be explored.
-
-Pruning is safe only when the removed branch cannot lead to a valid answer.
-
-### How to Design Backtracking
-
-Before writing code, answer four questions:
+写之前先定四件事：
 
 | Question | Meaning |
 |---|---|
-| State | What has already been decided? |
-| Choices | What can I choose next? |
-| Constraints | Which choices are valid? |
-| Base Case | When is a solution complete? |
+| State | 已经决定了什么 |
+| Choices | 下一步能选什么 |
+| Constraints | 哪些选择不合法 |
+| Base Case | 什么时候算做完，可以存答案 |
 
-Also define the meaning of the recursive function:
-
-> `backtrack(state, path)` explores all valid completions extending the current partial solution.
+> `backtrack(state, path)` 的意思是：在当前这份部分答案上，把后面所有合法的补全都试一遍。剪枝只在这条分支不可能有答案时才安全。
 
 ---
 
 ## Pattern 1: Include / Exclude
 
-Use this pattern when each element can either be selected or skipped.
-
-Each level makes a binary decision:
-
-```text
-Include current element
-Exclude current element
-```
+每个元素只有选或不选。
 
 ### 78. Subsets
-
-For each element, decide whether to include it.
 
 ```python
 def backtrack(index, path):
@@ -124,40 +62,26 @@ def backtrack(index, path):
         output.append(path.copy())
         return
 
-    # Include
     path.append(nums[index])
     backtrack(index + 1, path)
     path.pop()
 
-    # Exclude
     backtrack(index + 1, path)
 ```
 
-State: `index, path`
+State: `index, path`。两条分支都是 `index + 1`，因为这个数的决定已经做完。不选的那次不用 `append`，前面的 `pop` 已经把路径恢复了。n 个元素有 `2^n` 个子集。
 
-Choices: Include or Exclude `nums[index]`.
+Time: O(n · 2^n). Space: O(n)，不算输出。
 
-Why `index + 1`?
-
-Each number is processed exactly once. After deciding whether to include the current number, move to the next number.
-
-The second recursive call requires no `append()` because the current element is excluded. The preceding `pop()` has already restored the path.
-
-For `n` elements, there are `2^n` subsets.
-
-> Subsets 的核心是每个数字都做一次“选 / 不选”。两条分支都要探索，否则会遗漏结果。
+> 每个数都要走「选」和「不选」。只写选的那条，会漏掉没选它的子集。
 
 ---
 
 ## Pattern 2: Choose From Remaining Elements
 
-Use this pattern when each position can be filled by any unused element.
-
-Unlike Subsets, we do not simply move through the original array in order.
+这一层不是按数组顺序决定当前元素，而是给当前位置挑一个还没用的元素。
 
 ### 46. Permutations
-
-Each level chooses which unused element to place next.
 
 ```python
 def backtrack(path):
@@ -174,55 +98,21 @@ def backtrack(path):
         path.pop()
 ```
 
-State: `path` (which also determines the used elements).
+State 就是 `path`，用过的数也能从它看出来。不能用 `index + 1`，因为下一个位置可以是任意还没用的数，不一定是原数组里的下一个。n 大一点时用 `used` 数组，避免每次扫 `path`。
 
-Choices: All elements not already used.
+Time: O(n · n!). Space: O(n)，不算输出。
 
-For `[1,2,3]`:
-
-```text
-[]
-├── [1]
-│   ├── [1,2] → [1,2,3]
-│   └── [1,3] → [1,3,2]
-├── [2]
-│   ├── [2,1] → [2,1,3]
-│   └── [2,3] → [2,3,1]
-└── [3]
-    ├── [3,1] → [3,1,2]
-    └── [3,2] → [3,2,1]
-```
-
-Why not `index + 1`?
-
-Because permutations allow different orders. The next element is not necessarily the next element in the original array.
-
-For larger inputs, a `used` array can avoid repeatedly scanning `path`.
-
-> Subsets 是决定当前元素要不要；Permutations 是决定当前空位放哪个未使用的元素。两个问题的 Decision Tree 完全不同。
+> Subsets 是「当前这个数选不选」。Permutations 是「这个空位放哪个没用过的数」。决策树不是同一种。
 
 ---
 
 ## Pattern 3: Construct Valid Sequences
 
-Use Backtracking to construct sequences while maintaining constraints.
-
-Instead of generating every sequence and validating afterward, reject invalid choices immediately.
+边构造边丢掉不合法的选择，不要先生成再检查整串。
 
 ### 22. Generate Parentheses
 
-For `n` pairs of parentheses, construct a string of length `2*n`.
-
-State:
-- `l`: Number of left parentheses used
-- `r`: Number of right parentheses used
-- `path`: Current sequence
-
-Invariant:
-
-```text
-0 <= r <= l <= n
-```
+`n` 对括号，长度 `2 * n`。
 
 ```python
 def backtrack(l, r, path):
@@ -241,52 +131,21 @@ def backtrack(l, r, path):
         path.pop()
 ```
 
-Two constraints:
+一直维持 `0 <= r <= l <= n`。`l < n` 才能再放左括号；`r < l` 才能放右括号，否则右括号没有匹配的左括号。长度到 `2 * n` 时，这个条件已经保证 `l == r == n`。
 
-1. `l < n`: Cannot use more than `n` left parentheses.
-2. `r < l`: Cannot add a right parenthesis without an unmatched left parenthesis.
+合法括号的每个前缀都满足这个关系，所以不会把正确答案剪掉。每种合法串只有一条路径，也不会重复。
 
-When `len(path) == 2*n`, the invariant guarantees `l == r == n`, so the result is valid.
+Time: 和第 n 个 Catalan 数同阶。Space: O(n)，不算输出。
 
-**Why does this generate all valid answers?**
-
-Every valid parentheses sequence satisfies the invariant at every prefix. Therefore, no valid sequence is pruned.
-
-Each sequence has exactly one corresponding path in the decision tree, so there are no duplicates.
-
-> 核心不是事后检查整个字符串，而是保证每一步的 partial solution 都合法。只要 invariant 一直成立，最终结果就一定合法。
+> 检查的是当前这份部分答案，不是最后再扫整串。不变量每一步都成立，收尾就一定合法。
 
 ---
 
 ## Pattern 4: Partition by Choosing the End Position
 
-Use this pattern when we need to split a string into segments, but the number and lengths of segments are unknown.
-
-Each level decides:
-
-> Where should the next substring end?
+段数和每段长度都不固定。每一层决定下一段切到哪里。
 
 ### 131. Palindrome Partitioning
-
-Partition a string into substrings such that every substring is a palindrome.
-
-Example:
-
-```python
-s = "aab"
-
-# Valid partitions:
-["a", "a", "b"]
-["aa", "b"]
-```
-
-State:
-- `start`: Starting index of the unprocessed part
-- `path`: Substrings already selected
-
-Choices: All possible non-empty substrings starting at `start`.
-
-Constraint: The selected substring must be a palindrome.
 
 ```python
 def backtrack(start, path):
@@ -303,127 +162,34 @@ def backtrack(start, path):
             path.pop()
 ```
 
-**Why does this work?**
+`start` 是还没切的起点，不是段的长度。`end` 走 `start + 1` 到 `len(s)`：至少切一个字符，并且 `range` 右端开区间，所以要写到 `len(s) + 1`。`s[start:end]` 含 `start`、不含 `end`，所以下一层从 `end` 继续。
 
-Every partition can be described as:
+回文检查只管这一段合不合法，递归管剩下的字符串还能怎么切。不用事先决定切几段。
 
-```text
-first substring + partition of the remaining string
-```
+`"aab"` 只看一条走通的路径就够：`start=0` 选 `"a"`，停在这里；里面再选 `"a"`、`"b"`，`start` 到末尾就存下 `["a","a","b"]`。返回并 `pop` 之后，外层才继续试 `"aa"`，得到 `["aa","b"]`。`"ab"`、`"aab"` 不是回文，直接丢掉。
 
-The `for loop` enumerates every possible first substring, while recursion handles all possible partitions of the remainder.
+Time: 最坏和切分方案数同阶，每段还要 O(n) 判断回文。Space: O(n)，不算输出。
 
-We do not need to determine the total number of segments in advance.
-
-### Understanding `start` and `end`
-
-For:
-
-```python
-s = "aab"
-#    012
-```
-
-When `start = 0`:
-
-| end | substring |
-|---|---|
-| 1 | `s[0:1]` → `"a"` |
-| 2 | `s[0:2]` → `"aa"` |
-| 3 | `s[0:3]` → `"aab"` |
-
-```python
-range(start + 1, len(s) + 1)
-```
-
-- `start + 1`: Substring must contain at least one character.
-- `len(s) + 1`: Python `range` excludes its upper bound, so we need `end == len(s)` to be possible.
-- `s[start:end]`: Includes `start`, excludes `end`.
-
-After selecting `s[start:end]`, recurse with `backtrack(end, path)` because the selected substring ends immediately before index `end`.
-
-### Recursion Trace: `"aab"`
-
-```text
-backtrack(0, [])
-│
-├── end=1: "a"
-│   backtrack(1, ["a"])
-│   │
-│   ├── end=2: "a"
-│   │   backtrack(2, ["a","a"])
-│   │   │
-│   │   └── end=3: "b"
-│   │       backtrack(3, ["a","a","b"])
-│   │       → SAVE
-│   │
-│   └── end=3: "ab" → invalid
-│
-├── end=2: "aa"
-│   backtrack(2, ["aa"])
-│   │
-│   └── end=3: "b"
-│       backtrack(3, ["aa","b"])
-│       → SAVE
-│
-└── end=3: "aab" → invalid
-```
-
-The exact execution order matters:
-
-1. The outer loop chooses `"a"` and pauses.
-2. Recursion explores all partitions starting with `"a"`.
-3. Recursive calls return and `pop()` restores previous paths.
-4. The outer loop resumes and chooses `"aa"`.
-5. Finally, `"aab"` is rejected.
-
-**Palindrome checking and Backtracking have different responsibilities:**
-
-- Palindrome check → Is the current segment valid?
-- Backtracking → Explore all valid combinations of segments.
-
-> `start` 不是 substring 长度，而是剩余字符串的起点。`for end` 枚举下一块怎么切，recursion 继续处理剩余部分，`pop()` 回到分叉点。
+> `for end` 枚举这一刀切在哪，递归处理剩下的，`pop` 回到这个分叉再试下一刀。`start == len(s)` 才是整串切完，不是「当前这段是回文」就可以存。
 
 ---
 
 ## Common Mistakes
 
-### 1. Not Defining State and Choices
-
-Do not begin by writing `append()` and recursion.
-
-First ask:
+### 1. 没先定这一层在决定什么
 
 ```text
-What does one recursion level represent?
-What choices are available at this level?
+78:  nums[index] 选还是不选
+46:  下一个没用过的数
+22:  在约束下加 "(" 或 ")"
+131: 下一段的结尾在哪
 ```
 
-Examples:
+### 2. 把 for 和递归的顺序搞反
 
-```text
-78: Choose whether to include nums[index]
-46: Choose the next unused number
-22: Choose "(" or ")" under constraints
-131: Choose where the next substring ends
-```
+一次递归会把这棵子树走完，循环才进下一个选择。子递归结束，回到调用那一行的后面，不是把外层 `for` 重来。
 
-### 2. Confusing For Loop and Recursion
-
-```python
-for choice in choices:
-    path.append(choice)
-    backtrack(...)
-    path.pop()
-```
-
-The recursive call explores the entire subtree before the loop continues to the next choice.
-
-Every recursive call has its own loop execution position.
-
-> 不是所有 `for loop` 同时跑，也不是 recursion 后从头运行。子递归结束，返回到调用它的那一行后面继续。
-
-### 3. Forgetting to Undo Choices
+### 3. 忘了撤销
 
 ```python
 path.append(choice)
@@ -431,133 +197,50 @@ backtrack(...)
 path.pop()
 ```
 
-`pop()` restores the path before exploring the next branch.
+`pop` 是换下一条分支前把现场还原，不是说刚才的选择错了。不还原的话，后面的分支会带上前面的元素。
 
-It does not mean the previous choice was wrong.
+### 4. Subsets 少了一整条分支
 
-Without restoring the state, later branches may inherit elements from earlier branches.
+只写 include、不写 exclude，就不是全部子集。
 
-### 4. Forgetting an Entire Decision Branch
-
-For Subsets:
-
-```python
-# Include
-path.append(nums[index])
-backtrack(index + 1, path)
-path.pop()
-
-# Exclude
-backtrack(index + 1, path)
-```
-
-Only implementing Include does not enumerate all subsets.
-
-### 5. Incorrect Index Movement
-
-Different problems require different state transitions:
+### 5. 下标移动抄错题
 
 ```text
-Subsets:
-    index + 1
-
-Permutations:
-    choose any unused element
-
-Palindrome Partitioning:
-    start = end
+Subsets:     index + 1
+Permutations: 任意没用过的元素
+Partition:   start = end
 ```
 
-Do not automatically use `index + 1` in every recursive problem.
-
-### 6. Saving a Mutable Path Without Copying
-
-Wrong:
+### 6. 存了还在变的 path
 
 ```python
-output.append(path)
-```
-
-Correct:
-
-```python
+output.append(path)        # 错，后面还会被改
 output.append(path.copy())
+output.append("".join(path))  # 字符路径先拼成新字符串
 ```
 
-Because `path` is mutable and will continue changing during backtracking.
+### 7. Base case 和启动调用
 
-For strings built from characters:
+切分题里 `start == len(s)` 表示整串用完。函数写完要记得 `backtrack(0, [])`。部分路径不是答案，除非这题规定每个子集都要存，比如另一种 Subsets 写法会在每层都保存当前 path。
 
-```python
-output.append("".join(path))
-```
+### 8. 图的 visited 和回溯状态
 
-### 7. Wrong Base Case or Forgetting to Start Recursion
-
-For partitioning:
-
-```python
-if start == len(s):
-    output.append(path.copy())
-    return
-```
-
-This means the entire string has been consumed, not merely that the current substring is valid.
-
-After defining the recursive function, remember:
-
-```python
-backtrack(0, [])
-return output
-```
-
-### 8. Confusing DFS Visited with Backtracking State
-
-In ordinary graph DFS, `visited` often remains marked permanently to avoid revisiting nodes.
-
-In Backtracking, choices are typically temporary and must be undone.
-
-For example, in Permutations, an element is marked as used while exploring a branch, then becomes available again for another branch.
+图 DFS 标记之后通常一直留着，避免回路。回溯里的选择是临时的：排列里一个数在这条分支用过，回来后别的分支还能再用。
 
 ```text
-Graph DFS: mark visited → usually stays visited
-
+Graph DFS:    mark visited，一般不再撤销
 Backtracking: choose → explore → undo
 ```
 
-### 9. Assuming Every Recursive Call Is an Answer
-
-A partial path is not necessarily a completed solution.
-
-Only save it when the problem's completion condition is satisfied.
-
-For example:
-
-```text
-Permutations: path length == len(nums)
-Parentheses: path length == 2*n
-Partitioning: start == len(s)
-```
-
-Subsets can also use a different pattern that saves every partial path, because every subset is a valid answer.
-
 ---
 
-## Summary: Recognizing Backtracking Patterns
+## Summary
 
-| Problem | Decision at Each Level | State Transition |
+| Problem | 这一层的决定 | 状态怎么走 |
 |---|---|---|
-| 78. Subsets | Include / Exclude | `index + 1` |
-| 46. Permutations | Choose unused element | Update `path` / `used` |
-| 22. Generate Parentheses | Add `(` or `)` | Update `l` or `r` |
-| 131. Palindrome Partitioning | Choose substring end | `start = end` |
+| 78. Subsets | 选 / 不选 | `index + 1` |
+| 46. Permutations | 选一个没用过的 | 更新 `path` / `used` |
+| 22. Generate Parentheses | 加 `(` 或 `)` | 更新 `l` 或 `r` |
+| 131. Palindrome Partitioning | 下一段切到哪 | `start = end` |
 
-Before solving a new Backtracking problem:
-
-1. **Define State:** What has already been decided?
-2. **Define Choices:** What can this level choose?
-3. **Define Constraints:** Which branches can be skipped?
-4. **Define Base Case:** When should the answer be saved?
-5. **Trace Recursion:** Choose → Explore → Undo → Next choice.
-
-> 最重要的直觉：Backtracking 就是在一棵 Decision Tree 上做 DFS。真正的难点不是写 `append / pop`，而是想清楚每层在决定什么，以及下一层递归要完成什么任务。
+> 难点不是 `append / pop` 这三行，而是这一层到底在决定什么，以及递归进去之后要完成的是哪一块。

@@ -10,36 +10,30 @@ description: "Greedy patterns, key decisions, and implementation notes."
 
 Greedy makes a locally optimal or **provably safe decision** at each step to achieve a globally optimal result.
 
-Core idea:
-- 不一定每一步都让答案变好，而是保证不会错过最优解。
+- 不一定每一步都让答案立刻变好，而是保证不会错过最优解。
 - 通过排除不可能更优的候选、扩展边界或维护局部约束，减少搜索。
 - 关键是证明 **why the greedy choice is safe**。
 
 **Greedy vs. DP**
-- **DP:** Consider different possible transitions and reuse optimal subproblem results.
-- **Greedy:** Find a safe decision rule that avoids exploring unnecessary alternatives.
 
-> Greedy 不是简单地选最大的或最小的，而是找到一个不会丢失最优解的决策规则。
+- **DP:** 把不同选择都算过，并复用子问题的最优解。
+- **Greedy:** 找到一条安全的决策规则，不用把其他分支再搜一遍。
+
+> Greedy 不是简单地选最大或最小，而是找到一个不会丢掉最优解的规则。
 
 ---
 
 ## Pattern 1: Candidate Elimination
 
-Eliminate candidates that can no longer produce a better or valid solution.
+丢掉已经不可能更好、也不可能合法的候选。
 
 ### 11. Container With Most Water 🟡
-
-Area:
 
 $$
 A=(r-l)\times\min(height[l],height[r])
 $$
 
-**Approach: Two Pointers**
-
-- Start with `l = 0`, `r = n - 1`.
-- Calculate the current area and update the maximum.
-- Always move the **shorter boundary**.
+左右指针从两端开始，每次移动较短的那一边。
 
 ```python
 while l < r:
@@ -51,18 +45,11 @@ while l < r:
         r -= 1
 ```
 
-**Key insight:** Width always decreases. Keeping the shorter boundary cannot produce a larger area, regardless of how tall the other boundary becomes.
+Time: O(n). Space: O(1)。
 
-> 每次丢弃较短边界时，所有因此不再考虑的组合，都不可能比已经计算过的组合更好。
+> 宽度每次都在变小，所以只能指望高度变大。较短的那条边留着，另一边再高也没用，面积不会超过已经算过的。移动短边时，被跳过的那些组合都不可能更好。移动之后面积不一定马上变大，只是剩下的候选里还可能有更大的。
 
 ### 134. Gas Station 🟡
-
-**Approach: Greedy Reset**
-
-Maintain:
-- `total`: Net gas across all stations; determines whether a solution exists.
-- `tank`: Current gas balance from the candidate start.
-- `start`: Current candidate starting station.
 
 ```python
 start = 0
@@ -80,25 +67,19 @@ for i in range(len(gas)):
 return start if total >= 0 else -1
 ```
 
-**Key insight:** If starting at `start` first fails at `i`, every candidate between `start` and `i` also fails. Skip directly to `i + 1`.
+Time: O(n). Space: O(1)。
 
-- `tank < 0` → Reset candidate start.
-- `total < 0` → Impossible to finish a full circuit.
-- `tank == 0` is valid.
-
-> 当前起点失败时，可以排除从 start 到 i 的全部候选。tank 判断当前起点，total 判断整体是否有解。
+> `tank` 看当前起点能不能走到现在，`total` 看整圈油够不够。`tank < 0` 时，从 `start` 到 `i` 的每个起点都会在 `i` 之前或 `i` 这里失败，直接把起点改成 `i + 1`。`tank == 0` 仍然算走得过去。`start` 从 0 开始，只有失败了才重置。
 
 ---
 
 ## Pattern 2: Reachability / Boundary Expansion
 
-Maintain a reachable boundary instead of enumerating possible paths.
+维护能到达的边界，不把每条路径都枚举出来。
 
 ### 55. Jump Game 🟡
 
-**Approach: Backward Greedy**
-
-Start from the last index as the destination.
+从最后一格往前看，能跳到当前终点的位置就变成新终点。
 
 ```python
 dest = len(nums) - 1
@@ -110,20 +91,13 @@ for i in range(len(nums) - 2, -1, -1):
 return dest == 0
 ```
 
-**Key insight:** If index `i` can reach the current destination, then `i` becomes the new destination.
+Time: O(n). Space: O(1)。
 
-> 从后往前找能到达终点的位置，不断把 dest 往前推，最后判断是否能推到 0。
+> 从后往前推 `dest`。`i` 能到当前终点，以后只要能到 `i`，就也能到原来的终点。最后看 `dest` 有没有被推到 0。
 
 ### 45. Jump Game II 🟡
 
-**Approach: Greedy + BFS Level Expansion**
-
-Unlike Jump Game I, we need the **minimum number of jumps**.
-
-Maintain:
-- `currentEnd`: Farthest boundary of the current jump layer.
-- `farthest`: Farthest position reachable from the current layer.
-- `jumps`: Number of completed jump layers.
+这题要的是最少跳数。同一跳能覆盖的下标看成一层。
 
 ```python
 jumps = currentEnd = farthest = 0
@@ -138,25 +112,19 @@ for i in range(len(nums) - 1):
 return jumps
 ```
 
-**Key insight:** Do not actually choose one landing position. Scan every position in the current reachable layer, then expand to the next layer.
+Time: O(n). Space: O(1)。
 
-- `i` is the scanning position, not the actual landing position.
-- `i == currentEnd` → Current layer completed, `jumps += 1`.
-- Stop before the last index to avoid an extra jump.
-
-> 把相同步数可以到达的 index 看成一层。先计算这一层能到达的最远边界，扫描完才增加 jumps，不会漏掉其他可能的落脚点。
+> `i` 是在扫当前这一层，不是选好的落点。先把这一层里每个位置能到的最远距离记进 `farthest`，扫到 `i == currentEnd` 才 `jumps += 1`，再把边界扩过去。循环停在 `len - 1` 之前，否则会多算一次到达终点的跳。
 
 ---
 
 ## Pattern 3: Two-Pass Greedy
 
-Use two directional passes when local constraints depend on both neighbors.
+左右邻居各管一个方向的约束时，分两遍做。
 
 ### 135. Candy 🟡
 
-Every child gets at least one candy. Children with higher ratings than their neighbors must receive more.
-
-**Approach: Left-to-Right + Right-to-Left**
+每人至少 1 颗。评分比邻居高，糖果就必须更多。
 
 ```python
 candies = [1] * len(ratings)
@@ -172,26 +140,19 @@ for i in range(len(ratings) - 2, -1, -1):
 return sum(candies)
 ```
 
-**Key insight:**
-- First pass: Satisfy the left-neighbor constraint.
-- Second pass: Satisfy the right-neighbor constraint.
-- Use `max()` to preserve requirements from the first pass.
-- Use the neighbor's candy count, not simply `+= 1`.
-- Equal ratings impose no ordering requirement.
+Time: O(n). Space: O(n)。
 
-> 两遍分别满足左右约束，第二遍用 max 保留两个方向要求的最小糖果数量，不能直接覆盖。
+> 从左到右只保证比左边高的人糖果更多，从右到左再补右边的约束。第二遍用 `max`，不能直接覆盖，否则左边已经要的数量会被改小。比的是邻居现在的糖果数，不是简单地 `+= 1`。评分相等没有大小要求。
 
 ---
 
 ## Pattern 4: Interval Boundary Expansion
 
-Track the required end of the current segment and cut as early as possible.
+当前这段必须覆盖到的右端先撑开，能切的时候尽早切。
 
 ### 763. Partition Labels 🟡
 
-Partition a string into the maximum number of parts, ensuring each character appears in only one part.
-
-**Approach: Last Occurrence + Greedy Boundary**
+每个字母只能出现在一个分段里，分段数尽量多。
 
 ```python
 last_pos = {}
@@ -212,13 +173,9 @@ for i, c in enumerate(s):
 return ans
 ```
 
-**Key insight:**
-- Record the last occurrence of every character.
-- Expand `curr_end` when a character appears again farther ahead.
-- `i == curr_end` → All characters in the current partition are complete; cut here.
-- Cut at the earliest valid position to maximize the number of partitions.
+Time: O(n). Space: O(1)，小写字母固定，不算输出。
 
-> 当前分区必须包含所有已遇到字符的最后一次出现。当 i == curr_end，就可以安全切分。
+> 先记下每个字符最后一次出现的位置。当前段里出现过的字符，它的最后一次也必须算进这段，所以 `curr_end = max(curr_end, last_pos[c])`，不能只看当前这个字符。`i == curr_end` 说明这段里的字符都收齐了，在这里切是最早的合法位置。
 
 ---
 
@@ -226,33 +183,20 @@ return ans
 
 | Pattern | Problems | Core Idea |
 |---|---|---|
-| Candidate Elimination | 11, 134 | Safely discard impossible candidates |
-| Reachability / Boundary | 55, 45 | Maintain reachable boundaries instead of paths |
-| Two-Pass Greedy | 135 | Satisfy left and right constraints separately |
-| Interval Partitioning | 763 | Expand boundary and cut at the earliest valid position |
+| Candidate Elimination | 11, 134 | 安全地丢掉不可能的候选 |
+| Reachability / Boundary | 55, 45 | 维护可达边界，不枚举路径 |
+| Two-Pass Greedy | 135 | 左右约束分开满足 |
+| Interval Partitioning | 763 | 撑开右端，尽早切 |
 
 ## Common Mistakes
 
-- **Greedy ≠ always choosing the largest value.** The choice must be safe.
-- **Jump Game II:** `i` is a scanning index, not the actual landing position.
-- **Gas Station:** Initialize `start = 0`; reset only when `tank < 0`.
-- **Candy:** Use the neighbor's count and `max()`, not simply `+= 1`.
-- **Partition Labels:** Use `max(curr_end, last_pos[c])`, not just the last position of the current character.
-- **Container:** Moving the shorter pointer does not guarantee immediate improvement.
-
-## Complexity Summary
-
-| Problem | Time | Extra Space |
-|---|---|---|
-| 11. Container With Most Water | O(n) | O(1) |
-| 55. Jump Game | O(n) | O(1) |
-| 45. Jump Game II | O(n) | O(1) |
-| 134. Gas Station | O(n) | O(1) |
-| 135. Candy | O(n) | O(n) |
-| 763. Partition Labels | O(n) | O(1)* |
-
-*For 763, assuming a fixed lowercase English alphabet and excluding the output array.*
+- Greedy 不是每次都选当前最大的数，这个选择必须是安全的。
+- Jump Game II：`i` 是扫描下标，不是落点。
+- Gas Station：`start` 从 0 开始，只有 `tank < 0` 才重置。
+- Candy：用邻居的糖果数和 `max`，不要直接 `+= 1` 或覆盖。
+- Partition Labels：`curr_end` 取的是已出现字符的最远结尾，不是当前字符自己的位置。
+- Container：移动短边只保证没丢掉最优，不保证这一步面积变大。
 
 ---
 
-> **Greedy 复习重点：先识别 Pattern，再想清楚维护什么变量、什么时候更新，以及为什么这个选择不会错过最优解。**
+> 先认出是哪一种 pattern，再看维护哪个变量、什么时候更新，以及为什么这样选不会错过最优解。

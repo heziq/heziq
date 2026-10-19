@@ -113,6 +113,10 @@ When one list becomes empty, connect the remaining nodes directly.
 
 Return `dummy.next`, not `dummy`.
 
+Time: O(n + m). Space: O(1)。
+
+> 头结点会变，用 `dummy` 挡住，最后返回 `dummy.next`。`tail` 一直指向结果的末尾，每次接上较小的那个节点。一边空了就把另一边剩下的整段接上。
+
 ---
 
 ## Pattern 3: Fast / Slow Pointers
@@ -136,6 +140,10 @@ while fast and fast.next:
     if slow == fast:
         return True
 ```
+
+Time: O(n). Space: O(1)。
+
+> `slow` 一步、`fast` 两步。有环一定会相遇；`fast` 走到 `None` 就是没环。`while` 要同时看 `fast` 和 `fast.next`，否则 `fast.next.next` 会空指针。
 
 ### 19. Remove Nth Node From End 🟡
 
@@ -216,6 +224,10 @@ carry = total // 10
 Use a dummy node to build the result. Continue while either list has nodes **or `carry` is nonzero**.
 
 Missing nodes contribute `0`.
+
+Time: O(max(n, m)). Space: O(1)，不算新建的结果链表。
+
+> 缺的那条当 0。循环要带到 `carry != 0`，不然最后多出来的进位会丢。
 
 ---
 

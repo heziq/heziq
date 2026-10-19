@@ -44,7 +44,9 @@ Store `number → index`. For each number `x`, check whether `target - x` has ap
 
 **Check before inserting** to avoid using the same element twice.
 
-Time: O(n).
+Time: O(n). Space: O(n).
+
+> 边扫边查 `target - x`。先查再插入，避免同一个下标用两次。
 
 ---
 
@@ -61,6 +63,10 @@ groups.setdefault(key, []).append(s)
 
 - `sorted(s)` returns a sorted list of characters.
 - `"".join(...)` combines them into a string.
+
+Time: O(n · k log k), `k` 是单词长度。Space: O(n · k)。
+
+> 异位词排完序是同一个字符串，用它当 key，同一组 append 到同一个 list。
 
 ---
 
@@ -110,7 +116,9 @@ Python reminders:
 - `list.sort()` → modifies original list
 - `sorted()` → returns a new list
 
-Sorting solution: O(n log n) worst case.
+Sorting solution: Time O(n log n). Space O(n)。
+
+> 先做成 `数字 → 次数`，再按次数取前 K。这里要的是频率，不是“出现过没有”。
 
 ---
 
