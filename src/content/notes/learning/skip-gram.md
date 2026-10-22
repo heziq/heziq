@@ -6,6 +6,8 @@ category: "Learn"
 tags: [cse256, NLP, Skip-Gram, Word-Embeddings]
 description: "Understanding Skip-Gram through conditional probability, maximum likelihood estimation, and word embedding construction."
 
+---
+
 # Skip-Gram: Probability, MLE, and Word Embeddings
 
 ## 1. Assignment: Understanding Skip-Gram
@@ -81,7 +83,7 @@ Skip-Gram 的任务是：
 - $k=1$：左右各 1 个。
 - $k=2$：左右各 2 个。
 
-**Embedding Dimension** $d$ 决定向量有多少个分量：
+**Embedding Dimension** 决定向量有多少个分量：
 
 - $d=2$：例如 $(0,10)$。
 - $d=300$：300-dimensional word vector。
