@@ -121,6 +121,8 @@ $$
 
 **Data Likelihood**
 
+在这个候选模型下，我们已经观察到的训练数据有多大可能出现。
+
 假设训练样本独立，整个训练数据的 Likelihood 是：
 
 $$
@@ -131,6 +133,12 @@ $$
 
 $$
 L=P(\text{dog}\mid\text{the})P(\text{cat}\mid\text{the})
+$$
+
+例如 `(the,dog)`、`(the,cat)`、`(the,cat)`：
+
+$$
+L=P(\text{dog}\mid\text{the})P(\text{cat}\mid\text{the})P(\text{cat}\mid\text{the})
 $$
 
 没有观察到的 pair 不直接进入乘积，但所有候选 Context 的概率仍必须加起来等于 1。
@@ -192,7 +200,7 @@ $$
 
 因此：
 
-**Minimize NLL = Maximize Log-Likelihood。**
+**Minimize NLL(Negative Log-Likelihood) = Maximize Log-Likelihood。**
 
 ### 2.5 Dot Product 和 Softmax
 
@@ -290,7 +298,7 @@ $$
 
 Vocabulary 中有四种可能，不代表它们必须等概率。MLE 根据观察到的 Context Frequencies 分配概率。
 
-### 3b. Construct the Center Vector
+### **3b. Construct the Center Vector**
 
 老师固定：
 
@@ -322,13 +330,31 @@ $$
 P(\text{dog}\mid\text{the})=\frac{e^t}{2e^t+2}=\frac{1}{2+2e^{-t}}
 $$
 
-题目允许误差 0.01，即：
+**目标概率是 0.5，但题目允许误差 0.01：**
+
+$$
+|P(\text{dog}\mid\text{the})-0.5|\leq0.01
+$$
+
+即：
+
+$$
+0.49\leq P(\text{dog}\mid\text{the})\leq0.51
+$$
+
+对于任何有限的 $t$，因为 $e^{-t}>0$，分母始终大于 2，因此：
+
+$$
+P(\text{dog}\mid\text{the})=\frac{1}{2+2e^{-t}}<0.5
+$$
+
+所以只需要满足下界：
 
 $$
 P(\text{dog}\mid\text{the})\geq0.49
 $$
 
-所以：
+代入：
 
 $$
 \frac{1}{2+2e^{-t}}\geq0.49
@@ -340,7 +366,13 @@ $$
 \boxed{t\geq\ln49\approx3.89}
 $$
 
-因此可以选择：
+因此，**任何 $t\geq3.89$ 都满足题目要求**，例如：
+
+- $t=4$：$P(\text{dog}\mid\text{the})\approx0.4910$，已经满足误差要求。
+- $t=10$：$P(\text{dog}\mid\text{the})\approx0.49998$，更加接近目标 0.5。
+- $t\to\infty$：概率才会在极限意义上达到 0.5。
+
+我们可以选择：
 
 $$
 \boxed{v_{\text{the}}=(0,10)}
@@ -354,7 +386,11 @@ $$
 
 其余两个概率约为 $0.000023$。
 
-**为什么是 10？** 不是算出唯一答案为 10，而是选择一个足够大的数满足误差要求。精确达到零概率需要无限大的 Score Gap。
+**为什么选择 10？**
+
+10 不是唯一答案，只是一个足够大的数，使 dog/cat 的概率非常接近 0.5。实际上 $t=4$ 就已经满足 tolerance 0.01。
+
+**Key Insight:** Softmax 对有限 Score 始终分配正概率，因此无法让 a/the 的概率精确等于 0，也无法让 dog/cat 的概率精确等于 0.5。增大 Score Gap 可以使概率无限接近目标，但精确达到目标需要 $t\to\infty$。
 
 ---
 
@@ -398,6 +434,8 @@ $$
 | cat | the: 0.5, a: 0.5 |
 
 第二步：设计 Context Vectors。
+
+同一类别使用相同向量。不同类别使用正交方向。
 
 让 Determiners 和 Nouns 位于两个不同方向：
 
@@ -477,7 +515,7 @@ $$
 
 ---
 
-## Appendix: Full Solutions (English)
+## Full Solutions
 
 ### 3a. Optimal Conditional Probabilities
 
