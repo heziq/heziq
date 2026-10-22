@@ -8,7 +8,7 @@ description: "Understanding Skip-Gram through conditional probability, maximum l
 
 ---
 
-# Skip-Gram: Probability, MLE, and Word Embeddings
+<!-- # Skip-Gram: Probability, MLE, and Word Embeddings -->
 
 ## 1. Assignment: Understanding Skip-Gram
 
