@@ -1,6 +1,6 @@
 ---
 
-## title: "Skip-Gram: Probability, MLE, and Word Embeddings"
+title: "Skip-Gram: Probability, MLE, and Word Embeddings"
 date: 2026-10-22
 category: "Learn"
 tags: [cse256, NLP, Skip-Gram, Word-Embeddings]
