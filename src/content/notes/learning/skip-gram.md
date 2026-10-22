@@ -83,12 +83,10 @@ Skip-Gram 的任务是：
 - $k=1$：左右各 1 个。
 - $k=2$：左右各 2 个。
 
-**Embedding Dimension** 决定向量有多少个分量：
+**Embedding Dimension** $d$ 决定向量有多少个分量：
 
 - $d=2$：例如 $(0,10)$。
 - $d=300$：300-dimensional word vector。
-
-记忆：**$k$ = 看多远；$d$ = 向量有多少维。**
 
 ### 2.2 Center Vector vs. Context Vector
 
