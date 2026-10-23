@@ -13,7 +13,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#f8f5ee" />
+    <meta name="theme-color" content="#f6f2ea" />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} type="image/svg+xml" />
     <title>{title === 'Jessica Yang' ? title : `${title} · Jessica Yang`}</title>
@@ -28,6 +28,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       } catch {
         document.documentElement.dataset.theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       }
+      document.querySelector('meta[name="theme-color"]').content = document.documentElement.dataset.theme === 'dark' ? '#0a0f1a' : '#f6f2ea';
     </script>
   </head>
   <body>

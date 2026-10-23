@@ -9,6 +9,7 @@
   toggle?.addEventListener('click', () => {
     const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = next;
+    document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#0a0f1a' : '#f6f2ea');
     updateLabel();
     try { localStorage.setItem('theme', next); } catch { /* Storage may be unavailable. */ }
   });

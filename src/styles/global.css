@@ -1,37 +1,41 @@
 :root {
   color-scheme: light;
-  --canvas: #f8f5ee;
-  --surface: #fffcf5;
-  --surface-soft: #e5eded;
-  --ink: #142d3b;
-  --muted: #526770;
-  --line: #cbd8d8;
-  --accent: #345b70;
-  --accent-ink: #28546a;
-  --code: #eaf0ef;
-  --shadow: 0 12px 28px rgba(35, 50, 57, .08);
-  --art-line: #527d89;
-  --art-fill: #dce8e8;
+  --canvas: #f6f2ea;
+  --surface: #fbf8f2;
+  --surface-soft: #e8e1d5;
+  --ink: #1e2430;
+  --muted: #5c6470;
+  --line: #d8d1c6;
+  --accent: #536d7b;
+  --accent-ink: #38596c;
+  --code: #eeeae2;
+  --shadow: 0 12px 28px rgba(35, 42, 51, .07);
+  --art-line: #6b8490;
+  --art-fill: #dce5e8;
+  --hero-atmosphere: radial-gradient(ellipse 60% 75% at 87% 30%, rgba(220, 229, 232, .38), transparent 75%), linear-gradient(115deg, rgba(231, 221, 207, .32), transparent 65%);
+  --hero-orb: #e9d8b5;
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --canvas: #10232d;
-  --surface: #19323d;
-  --surface-soft: #25434b;
-  --ink: #f2f3ed;
-  --muted: #b8cbcb;
-  --line: #41606a;
-  --accent: #a9d0d3;
-  --accent-ink: #c3e0df;
-  --code: #1d353d;
+  --canvas: #0a0f1a;
+  --surface: #101827;
+  --surface-soft: #1a2740;
+  --ink: #e8edf7;
+  --muted: #a8b3c7;
+  --line: #2c3a50;
+  --accent: #8fa9c9;
+  --accent-ink: #b9cce4;
+  --code: #162238;
   --shadow: 0 12px 28px rgba(0, 0, 0, .2);
-  --art-line: #8ebbc4;
-  --art-fill: #244550;
+  --art-line: #91aacc;
+  --art-fill: #233552;
+  --hero-atmosphere: radial-gradient(ellipse 58% 80% at 88% 27%, rgba(35, 53, 82, .4), transparent 76%), linear-gradient(115deg, rgba(18, 28, 46, .5), transparent 70%);
+  --hero-orb: #d8e2f2;
 }
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 28px; }
-body { margin: 0; background: var(--canvas); color: var(--ink); font-family: "Avenir Next", Avenir, "Helvetica Neue", sans-serif; font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+body { margin: 0; background: var(--canvas); color: var(--ink); font-family: "Avenir Next", Avenir, "Helvetica Neue", sans-serif; font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; transition: background-color .25s, color .25s; }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; }
 ::selection { background: var(--accent); color: var(--surface); }
@@ -46,7 +50,7 @@ h2 { font-size: clamp(30px, 3vw, 44px); }
 .skip-link { position: absolute; top: -100px; left: 20px; z-index: 100; padding: 10px 16px; background: var(--ink); color: var(--canvas); }
 .skip-link:focus { top: 12px; }
 
-.site-header { position: relative; z-index: 2; border-bottom: 1px solid var(--line); background: var(--canvas); }
+.site-header { position: relative; z-index: 2; border-bottom: 1px solid var(--line); background: var(--canvas); transition: background-color .25s; }
 .header-inner { display: flex; align-items: center; gap: 34px; min-height: 80px; }
 .brand { display: inline-flex; align-items: center; gap: 12px; flex-shrink: 0; font-weight: 680; letter-spacing: -.03em; }
 .brand-mark { display: inline-flex; align-items: center; justify-content: center; place-items: center; width: 36px; height: 36px; border: 0; border-bottom: 1px solid var(--accent); border-radius: 0; color: var(--accent-ink); font-family: "Iowan Old Style", Georgia, serif; font-size: 16px; font-style: italic; letter-spacing: -.06em; }
@@ -72,7 +76,11 @@ h2 { font-size: clamp(30px, 3vw, 44px); }
 .eyebrow { color: var(--accent-ink); letter-spacing: .12em; }
 .count-label { color: var(--muted); white-space: nowrap; }
 
-.hero { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(260px, .55fr); gap: clamp(44px, 7vw, 110px); align-items: center; padding-block: clamp(76px, 10vw, 132px) clamp(76px, 9vw, 118px); border-bottom: 1px solid var(--line); }
+.hero { position: relative; display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(260px, .55fr); gap: clamp(44px, 7vw, 110px); align-items: center; padding-block: clamp(76px, 10vw, 132px) clamp(76px, 9vw, 118px); border-bottom: 1px solid var(--line); isolation: isolate; }
+.hero::before { position: absolute; z-index: -1; inset: 0; content: ""; background: var(--hero-atmosphere); pointer-events: none; }
+.hero-sky { position: absolute; top: 29px; right: 15px; width: 16px; height: 16px; border-radius: 50%; background: var(--hero-orb); opacity: .75; pointer-events: none; }
+:root[data-theme="dark"] .hero-sky { width: 15px; height: 15px; background: transparent; box-shadow: inset -4px -2px 0 0 var(--hero-orb); opacity: .8; }
+:root[data-theme="dark"] .hero-sky::after { position: absolute; top: 12px; right: 37px; width: 2px; height: 2px; border-radius: 50%; background: var(--hero-orb); box-shadow: 31px 21px 0 var(--hero-orb), -26px 18px 0 var(--hero-orb); content: ""; opacity: .55; }
 .hero .eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 25px; font-size: 11px; font-weight: 650; }
 .hero h1 { max-width: 680px; margin-bottom: 26px; font-size: clamp(48px, 5vw, 68px); line-height: 1.08; text-wrap: balance; }
 .hero-intro { max-width: 590px; margin-bottom: 31px; color: var(--ink); font-size: clamp(17px, 1.5vw, 19px); line-height: 1.72; }
@@ -116,11 +124,11 @@ h2 { font-size: clamp(30px, 3vw, 44px); }
 .visual-1 { background: #d8e1de; }
 .visual-2 { background: #e3e7de; }
 .visual-3 { background: #d6e1e5; }
-:root[data-theme="dark"] .project-visual { background: #26464c; }
-:root[data-theme="dark"] .visual-0 { background: #25444c; }
-:root[data-theme="dark"] .visual-1 { background: #253e47; }
-:root[data-theme="dark"] .visual-2 { background: #34463f; }
-:root[data-theme="dark"] .visual-3 { background: #283f4b; }
+:root[data-theme="dark"] .project-visual { background: #1c2a40; }
+:root[data-theme="dark"] .visual-0 { background: #1d2d47; }
+:root[data-theme="dark"] .visual-1 { background: #202c40; }
+:root[data-theme="dark"] .visual-2 { background: #272f42; }
+:root[data-theme="dark"] .visual-3 { background: #1d2b42; }
 .project-diagram { width: 100%; height: 100%; fill: none; stroke: var(--accent); stroke-width: 1.4; opacity: .9; }
 .project-diagram rect { fill: color-mix(in srgb, var(--surface) 42%, transparent); }
 .project-diagram circle { fill: var(--surface); }
