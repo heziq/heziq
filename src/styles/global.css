@@ -12,8 +12,7 @@
   --shadow: 0 12px 28px rgba(35, 42, 51, .07);
   --art-line: #6b8490;
   --art-fill: #dce5e8;
-  --hero-atmosphere: radial-gradient(ellipse 60% 75% at 87% 30%, rgba(220, 229, 232, .38), transparent 75%), linear-gradient(115deg, rgba(231, 221, 207, .32), transparent 65%);
-  --hero-orb: #e9d8b5;
+  --hero-atmosphere: linear-gradient(180deg, rgba(231, 221, 207, .18), transparent 72%);
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
@@ -29,8 +28,7 @@
   --shadow: 0 12px 28px rgba(0, 0, 0, .2);
   --art-line: #91aacc;
   --art-fill: #233552;
-  --hero-atmosphere: radial-gradient(ellipse 58% 80% at 88% 27%, rgba(35, 53, 82, .4), transparent 76%), linear-gradient(115deg, rgba(18, 28, 46, .5), transparent 70%);
-  --hero-orb: #d8e2f2;
+  --hero-atmosphere: linear-gradient(180deg, rgba(26, 39, 64, .28), transparent 72%);
 }
 
 * { box-sizing: border-box; }
@@ -76,11 +74,8 @@ h2 { font-size: clamp(30px, 3vw, 44px); }
 .eyebrow { color: var(--accent-ink); letter-spacing: .12em; }
 .count-label { color: var(--muted); white-space: nowrap; }
 
-.hero { position: relative; display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(260px, .55fr); gap: clamp(44px, 7vw, 110px); align-items: center; padding-block: clamp(76px, 10vw, 132px) clamp(76px, 9vw, 118px); border-bottom: 1px solid var(--line); isolation: isolate; }
+.hero { position: relative; display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(260px, .55fr); gap: clamp(44px, 7vw, 110px); align-items: center; padding-block: clamp(64px, 7vw, 92px) clamp(76px, 9vw, 118px); border-bottom: 1px solid var(--line); isolation: isolate; }
 .hero::before { position: absolute; z-index: -1; inset: 0; content: ""; background: var(--hero-atmosphere); pointer-events: none; }
-.hero-sky { position: absolute; top: 29px; right: 15px; width: 16px; height: 16px; border-radius: 50%; background: var(--hero-orb); opacity: .75; pointer-events: none; }
-:root[data-theme="dark"] .hero-sky { width: 15px; height: 15px; background: transparent; box-shadow: inset -4px -2px 0 0 var(--hero-orb); opacity: .8; }
-:root[data-theme="dark"] .hero-sky::after { position: absolute; top: 12px; right: 37px; width: 2px; height: 2px; border-radius: 50%; background: var(--hero-orb); box-shadow: 31px 21px 0 var(--hero-orb), -26px 18px 0 var(--hero-orb); content: ""; opacity: .55; }
 .hero .eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 25px; font-size: 11px; font-weight: 650; }
 .hero h1 { max-width: 680px; margin-bottom: 26px; font-size: clamp(48px, 5vw, 68px); line-height: 1.08; text-wrap: balance; }
 .hero-intro { max-width: 590px; margin-bottom: 31px; color: var(--ink); font-size: clamp(17px, 1.5vw, 19px); line-height: 1.72; }
