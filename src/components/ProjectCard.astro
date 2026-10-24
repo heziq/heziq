@@ -1,22 +1,23 @@
 ---
-import type { Project } from '../lib/projects';
+import type { CollectionEntry } from 'astro:content';
 import { href } from '../lib/site';
-const { project, index = 0 } = Astro.props as { project: Project; index?: number };
+const { project, index = 0 } = Astro.props as { project: CollectionEntry<'myproject'>; index?: number };
+const detail = project.data.detail ? href(`projects/${project.id}/`) : undefined;
 ---
 <article class="project-card">
   <div class:list={['project-visual', `visual-${index % 4}`]}>
-    {project.image ? <img src={href(project.image)} alt={`${project.title} preview`} loading="lazy" /> : <svg class="project-diagram" viewBox="0 0 600 270" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+    {project.data.image ? <img src={href(project.data.image)} alt={`${project.data.title} preview`} loading="lazy" /> : <svg class="project-diagram" viewBox="0 0 600 270" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
       {index % 4 === 0 && <g><path d="M75 209h450M91 170h418M108 131h384M124 92h352" /><path d="M183 62v148M300 62v148M417 62v148" /><rect x="183" y="131" width="117" height="39" /><rect x="300" y="92" width="117" height="39" /><circle cx="183" cy="170" r="5" /><circle cx="417" cy="92" r="5" /></g>}
       {index % 4 === 1 && <g><path d="M110 135h93l52-64h85l54 64h96M110 135h93l52 64h85l54-64" /><circle cx="110" cy="135" r="23" /><circle cx="255" cy="71" r="23" /><circle cx="255" cy="199" r="23" /><circle cx="394" cy="135" r="23" /><circle cx="490" cy="135" r="23" /><path d="M266 71h53M266 199h53" /></g>}
       {index % 4 === 2 && <g><path d="M80 64h176v142H80zM344 64h176v142H344zM256 98h88M256 135h88M256 172h88" /><path d="M105 92h105M105 119h126M105 146h76M105 173h114M370 92h102M370 119h68M370 146h110M370 173h83" /><circle cx="300" cy="135" r="6" /></g>}
       {index % 4 === 3 && <g><path d="M74 208 207 74l91 132 85-96 143 98M74 208h452" /><circle cx="207" cy="74" r="16" /><circle cx="383" cy="110" r="16" /><path d="M70 55h455M70 92h76M454 92h71M70 129h48M482 129h43" /></g>}
     </svg>}
-    <span class="visual-caption">{project.tags[0]}</span>
+    <span class="visual-caption">{project.data.tags[0]}</span>
   </div>
   <div class="project-body">
-    <h3>{project.title}</h3>
-    <p>{project.description}</p>
-    <div class="project-tags">{project.tags.map((tag) => <span>{tag}</span>)}</div>
-    {(project.detail || project.github) && <a class="card-link" href={project.detail ? href(project.detail) : project.github} aria-label={`View ${project.title}`}>View project <span aria-hidden="true">↗</span></a>}
+    <h3>{detail ? <a href={detail}>{project.data.title}</a> : project.data.title}</h3>
+    <p>{project.data.description}</p>
+    <div class="project-tags">{project.data.tags.map((tag) => <span>{tag}</span>)}</div>
+    {(detail || project.data.github) && <a class="card-link" href={detail || project.data.github} aria-label={`View ${project.data.title}`}>View project <span aria-hidden="true">↗</span></a>}
   </div>
 </article>

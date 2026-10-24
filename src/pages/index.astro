@@ -3,11 +3,11 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import NoteCard from '../components/NoteCard.astro';
-import { projects } from '../lib/projects';
 import { categories, categorySlug, href, newestFirst } from '../lib/site';
 
 const notes = (await getCollection('notes')).sort(newestFirst);
 const recentNotes = notes.slice(0, 3);
+const projects = (await getCollection('myproject')).sort((a, b) => a.data.order - b.data.order);
 ---
 <BaseLayout>
   <div class="shell home">

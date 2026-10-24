@@ -1,0 +1,39 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { href } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('myproject');
+  return projects.filter((project) => project.data.detail).map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props as { project: CollectionEntry<'myproject'> };
+const { Content } = await render(project);
+---
+<BaseLayout title={project.data.title} description={project.data.description}>
+  <div class="shell case-page">
+    <nav class="case-breadcrumb" aria-label="Breadcrumb"><a href={href('projects/')}>Projects</a><span aria-hidden="true">/</span><span aria-current="page">{project.data.title}</span></nav>
+
+    <header class="case-header">
+      <h1>{project.data.title}</h1>
+      <p>{project.data.description}</p>
+      {project.data.github && <a class="case-source" href={project.data.github} target="_blank" rel="noopener noreferrer">View source on GitHub <span aria-hidden="true">↗</span></a>}
+    </header>
+
+    {project.data.image && <figure class="case-image"><img src={href(project.data.image)} alt={`${project.data.title} preview`} /></figure>}
+
+    <div class="case-layout">
+      <article class="case-reading prose"><Content /></article>
+      {(project.data.role || project.data.stack.length > 0) && <aside class="case-facts" aria-label="Project details">
+        {project.data.role && <div><span>Role</span><p>{project.data.role}</p></div>}
+        {project.data.stack.length > 0 && <div><span>Tools</span><p>{project.data.stack.join(' · ')}</p></div>}
+      </aside>}
+    </div>
+
+    <a class="case-return" href={href('projects/')}>← All projects</a>
+  </div>
+</BaseLayout>

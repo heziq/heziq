@@ -45,6 +45,26 @@ The workflow in `.github/workflows/deploy.yml` builds and deploys on every push 
 
 `astro.config.mjs` reads `GITHUB_REPOSITORY` during Actions builds. In `heziq/heziq`, the site uses `https://heziq.github.io/heziq/`. If the repository is renamed to `heziq.github.io`, it automatically uses `/` as the base path. For a different owner or repository, the same variables provide the matching site URL and base path.
 
-Project summaries and links live in `src/lib/projects.ts`. Contact links are on the home page in `src/pages/index.astro`.
+## Add a project
 
-Each project can optionally define `image`, `detail`, or `github` in `src/lib/projects.ts`. Images belong in `public/` and use paths relative to the site base; cards show an abstract visual when no image is supplied. The Notes page searches a static index generated from note titles, descriptions, categories, tags, and Markdown text. No search service is needed.
+Create one Markdown file in `src/content/myproject/`, named for its URL slug (for example, `my-project.md` becomes `/projects/my-project/`). Put the card summary and metadata in frontmatter, then write the detail page in Markdown:
+
+```md
+---
+title: "My project"
+description: "One sentence for the project card."
+tags: [Graphics, Research]
+order: 5
+github: "https://github.com/example/my-project"
+role: "Independent project"
+stack: [Python, OpenGL]
+---
+
+## Overview
+
+What the project does and why it matters.
+```
+
+Lower `order` values appear first; the first three projects also appear on the home page. A file gets a detail page automatically. Use `detail: false` for a summary-only placeholder. For a card and detail-page cover, put an image in `public/images/projects/` and set `image: "images/projects/my-project.webp"`. For images inside the article, place the file alongside the Markdown (or in a nearby `images/` folder) and use a relative Markdown image such as `![Project screenshot](./images/my-project.webp)`. Cards without an image keep the existing abstract visual.
+
+Contact links are on the home page in `src/pages/index.astro`. The Notes page searches a static index generated from note titles, descriptions, categories, tags, and Markdown text. No search service is needed.
